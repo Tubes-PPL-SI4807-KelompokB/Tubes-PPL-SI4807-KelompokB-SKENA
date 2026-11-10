@@ -12,7 +12,10 @@ use Illuminate\Http\Request;
 class SearchController extends Controller
 {
     /** FR-25 – daftar */
-    public function index() {}
+    public function index()
+    {
+        return view('home.index');
+    }
 
     /** FR-25 – form tambah */
     public function create() {}

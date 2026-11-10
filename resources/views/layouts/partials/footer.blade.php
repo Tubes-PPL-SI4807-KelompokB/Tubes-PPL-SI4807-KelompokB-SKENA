@@ -1,11 +1,5 @@
-{{-- footer – TODO: implementasi tampilan --}}
-@extends('layouts.app')
-
-@section('title', 'footer | SKENA')
-
-@section('content')
-<div class="container mx-auto px-4 py-6">
-    <h1 class="text-2xl font-bold">{{ 'footer' }}</h1>
-    {{-- TODO: implementasi konten --}}
-</div>
-@endsection
+<footer class="bg-white border-t border-gray-200 mt-auto py-6">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-sm text-gray-500">
+        &copy; {{ date('Y') }} SKENA – Platform Marketplace Jasa Kreatif.
+    </div>
+</footer>
