@@ -12,141 +12,73 @@
     </div>
 </div>
 
-{{-- 1. Hero Section (Asymmetric Split, Editorial Grid, Real Product Feel) --}}
-<section class="border-b border-slate-200 bg-white relative overflow-hidden">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-20">
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
+{{-- 1. Hero Section (Sesuai Referensi SKENA: Blue Background, Pill Badge, Buttons & Bottom Wave Tanpa Foto) --}}
+<section class="relative overflow-hidden pt-14 sm:pt-20 pb-0" style="background: linear-gradient(180deg, #2C99D6 0%, #207FA8 100%);">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
 
-            {{-- Left Column (Copy & Search) --}}
-            <div class="lg:col-span-7">
-                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-md border border-slate-200 bg-slate-50 text-[11px] font-mono uppercase tracking-wider text-slate-700 mb-6">
-                    <span class="w-2 h-2 rounded-full" style="background:#2C99D6"></span>
-                    SKENA — Skill Exchange Network
-                </div>
-
-                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-950 tracking-tight leading-[1.08] mb-6">
-                    Skill Exchange Network.
-                    <span class="block text-transparent bg-clip-text" style="background-image: linear-gradient(135deg, #0F2942 30%, #2C99D6 100%);">
-                        Jasa Kreatif Mahasiswa.
-                    </span>
-                </h1>
-
-                <p class="text-base sm:text-lg text-slate-600 leading-relaxed max-w-xl mb-8 font-normal">
-                    <strong>SKENA (Skill Exchange Network)</strong> memberdayakan talenta mahasiswa DKV, Multimedia, dan IT berbakat se-Indonesia. Pesan jasa logo, branding, UI/UX Figma, hingga video TikTok dengan harga mahasiswa dan proteksi rekening bersama.
-                </p>
-
-                {{-- Embedded Search Tool --}}
-                <div class="p-2 rounded-2xl border-2 border-slate-900 bg-white shadow-[4px_4px_0px_0px_#0F2942] max-w-xl mb-6">
-                    <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
-                        <div class="flex-1 flex items-center pl-3">
-                            <svg class="w-5 h-5 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                            <input type="text"
-                                   placeholder="Butuh jasa apa? (cth: Logo Cafe, Reels Video, UI Mobile...)"
-                                   class="w-full px-3 py-2.5 text-sm text-slate-900 placeholder-slate-400 outline-none font-medium">
-                        </div>
-                        <button type="button"
-                                class="px-6 py-3 rounded-xl text-sm font-bold text-white transition-transform active:translate-y-0.5 shrink-0 flex items-center justify-center gap-2 shadow-sm"
-                                style="background:#2C99D6">
-                            <span>Temukan Talenta</span>
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-                        </button>
-                    </div>
-                </div>
-
-                {{-- Popular Search Chips --}}
-                <div class="flex flex-wrap items-center gap-2 text-xs">
-                    <span class="text-slate-400 font-mono text-[11px] uppercase tracking-wide">Cepat:</span>
-                    <a href="#" class="px-3 py-1 rounded-full border border-slate-200 text-slate-700 hover:border-slate-900 hover:text-slate-950 font-medium transition-colors">Logo Minimalis</a>
-                    <a href="#" class="px-3 py-1 rounded-full border border-slate-200 text-slate-700 hover:border-slate-900 hover:text-slate-950 font-medium transition-colors">Reels & TikTok</a>
-                    <a href="#" class="px-3 py-1 rounded-full border border-slate-200 text-slate-700 hover:border-slate-900 hover:text-slate-950 font-medium transition-colors">UI/UX Figma</a>
-                    <a href="#" class="px-3 py-1 rounded-full border border-slate-200 text-slate-700 hover:border-slate-900 hover:text-slate-950 font-medium transition-colors">Banner Acara</a>
-                </div>
-
-                {{-- Creator Proof Bar --}}
-                <div class="flex items-center gap-4 mt-8 pt-6 border-t border-slate-100">
-                    <div class="flex -space-x-2">
-                        <img class="w-8 h-8 rounded-full border-2 border-white object-cover" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" alt="Kreator">
-                        <img class="w-8 h-8 rounded-full border-2 border-white object-cover" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80" alt="Kreator">
-                        <img class="w-8 h-8 rounded-full border-2 border-white object-cover" src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=100&auto=format&fit=crop&q=80" alt="Kreator">
-                        <div class="w-8 h-8 rounded-full border-2 border-white bg-slate-900 text-white text-[10px] font-bold flex items-center justify-center">+400</div>
-                    </div>
-                    <div class="text-xs text-slate-600">
-                        <span class="font-bold text-slate-900">Mahasiswa kreatif</span> dari ITB, UI, Telkom, ISI, UGM siap menerima komisi hari ini.
-                    </div>
-                </div>
-            </div>
-
-            {{-- Right Column (Real Live Commission Mockup Card) --}}
-            <div class="lg:col-span-5">
-                <div class="relative max-w-md mx-auto">
-
-                    {{-- Background Offset Shadow Card --}}
-                    <div class="absolute inset-0 bg-slate-900 rounded-3xl translate-x-3 translate-y-3 hidden sm:block"></div>
-
-                    {{-- Main Showcase Card --}}
-                    <div class="relative bg-white rounded-3xl border-2 border-slate-900 p-5 overflow-hidden">
-
-                        {{-- Card Header: Creator info --}}
-                        <div class="flex items-center justify-between pb-3 mb-3 border-b border-slate-100">
-                            <div class="flex items-center gap-2.5">
-                                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80"
-                                     class="w-9 h-9 rounded-full object-cover border border-slate-200">
-                                <div>
-                                    <div class="flex items-center gap-1">
-                                        <p class="text-xs font-bold text-slate-900">Earliyanza</p>
-                                        <svg class="w-3.5 h-3.5" style="color:#2C99D6" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
-                                    </div>
-                                    <p class="text-[10px] text-slate-500">DKV Telkom University · Semester 6</p>
-                                </div>
-                            </div>
-                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold text-white" style="background:#EB2E33">
-                                ● OPEN COMMISSIONS
-                            </span>
-                        </div>
-
-                        {{-- Artwork Visual Preview --}}
-                        <div class="relative rounded-2xl overflow-hidden aspect-[4/3] bg-slate-100 mb-4 border border-slate-200">
-                            <img src="https://images.unsplash.com/photo-1626785774573-4b799315345d?w=800&auto=format&fit=crop&q=80"
-                                 alt="Contoh Hasil Karya Logo & Brand"
-                                 class="w-full h-full object-cover hover:scale-105 transition-transform duration-500">
-                            <div class="absolute bottom-3 left-3 bg-slate-950/80 backdrop-blur-md text-white text-[10px] font-mono px-2.5 py-1 rounded-md">
-                                Brand Identity Package
-                            </div>
-                        </div>
-
-                        {{-- Service Details --}}
-                        <div class="mb-4">
-                            <div class="flex items-center gap-1 text-xs text-amber-500 font-bold mb-1">
-                                <span>★ 4.9</span>
-                                <span class="text-slate-400 font-normal">(28 ulasan selesai)</span>
-                            </div>
-                            <h3 class="text-sm font-bold text-slate-900 leading-snug">
-                                Desain Identitas Brand & Logo Minimalis Lengkap dengan Brandbook UMKM
-                            </h3>
-                        </div>
-
-                        {{-- Pricing and Action --}}
-                        <div class="pt-3 border-t border-slate-100 flex items-center justify-between">
-                            <div>
-                                <span class="text-[10px] font-mono text-slate-400 block uppercase">Tarif Mulai</span>
-                                <span class="text-base font-black text-slate-900">Rp 175.000</span>
-                            </div>
-                            <a href="{{ route('login') }}"
-                               class="px-4 py-2 rounded-xl text-xs font-bold text-white transition-all hover:opacity-95"
-                               style="background:#2C99D6">
-                                Konsultasi Jasa →
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
+        {{-- Top Pill Badge --}}
+        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold tracking-widest text-white uppercase bg-white/20 backdrop-blur-md border border-white/30 mb-8 shadow-sm">
+            <span>•</span> SELAMAT DATANG DI SKENA <span>•</span>
         </div>
+
+        {{-- Main Headline --}}
+        <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight leading-[1.15] mb-6">
+            @auth
+                Halo, {{ auth()->user()->name }}!<br>
+            @else
+                SKENA: Skill Exchange Network.<br>
+            @endauth
+            Mau cari atau tawarkan jasa hari ini?
+        </h1>
+
+        {{-- Subtitle --}}
+        <p class="text-base sm:text-lg text-blue-100 font-normal leading-relaxed max-w-2xl mx-auto mb-9">
+            Kolaborasi antar mahasiswa seluruh Indonesia. Cepat, berkualitas, dan harga bersahabat ramah kantong kuliah.
+        </p>
+
+        {{-- Action Buttons (Dua Tombol Khas: Cari Jasa & Tawarkan Jasa) --}}
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
+            <a href="#katalog"
+               class="w-full sm:w-auto px-8 py-3.5 rounded-full text-sm font-bold text-slate-900 bg-white hover:bg-slate-100 transition-all flex items-center justify-center gap-3 shadow-lg active:scale-95">
+                <span>Cari Jasa</span>
+                <span class="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-xs font-black">↗</span>
+            </a>
+            <a href="{{ route('register') }}?role=freelancer"
+               class="w-full sm:w-auto px-8 py-3.5 rounded-full text-sm font-bold text-white bg-white/10 hover:bg-white/20 border border-white/40 transition-all flex items-center justify-center gap-2.5 backdrop-blur-sm active:scale-95">
+                <span class="w-5 h-5 rounded-full border border-white/80 flex items-center justify-center text-xs font-bold">+</span>
+                <span>Tawarkan Jasa</span>
+            </a>
+        </div>
+
+        {{-- Embedded Search Bar --}}
+        <div class="max-w-xl mx-auto bg-white/95 backdrop-blur-md p-2 rounded-2xl shadow-xl border border-white/40 mb-10">
+            <div class="flex items-center gap-2">
+                <div class="flex-1 flex items-center pl-3">
+                    <svg class="w-5 h-5 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                    <input type="text"
+                           placeholder="Coba cari: Logo Minimalis, Reels Video, UI Figma..."
+                           class="w-full px-3 py-2 text-sm text-slate-900 placeholder-slate-400 outline-none bg-transparent font-medium">
+                </div>
+                <button type="button"
+                        class="px-5 py-2.5 rounded-xl text-xs font-bold text-white transition-all hover:opacity-90 active:scale-95 shrink-0"
+                        style="background:#2C99D6">
+                    Telusuri
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    {{-- Seamless Organic Bottom Wave Ke Warna Canvas #F8FAFC --}}
+    <div class="w-full overflow-hidden leading-none relative z-0">
+        <svg class="relative block w-full h-12 sm:h-20 lg:h-24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 160" preserveAspectRatio="none">
+            <path fill="#F8FAFC" d="M0,96L48,106.7C96,117,192,139,288,138.7C384,139,480,117,576,96C672,75,768,53,864,64C960,75,1056,117,1152,122.7C1248,128,1344,96,1392,80L1440,64L1440,160L1392,160C1344,160,1248,160,1152,160C1056,160,960,160,864,160C768,160,672,160,576,160C480,160,384,160,288,160C192,160,96,160,48,160L0,160Z"></path>
+        </svg>
     </div>
 </section>
 
 {{-- 2. Category Live Pill Strip --}}
-<section class="border-b border-slate-200 bg-slate-50 py-4 overflow-x-auto">
+<section id="katalog" class="border-b border-slate-200 bg-slate-50 py-4 overflow-x-auto">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center gap-2 whitespace-nowrap">
         <span class="text-xs font-mono font-bold text-slate-400 uppercase tracking-wider mr-2">Katalog:</span>
         <button class="px-3.5 py-1.5 rounded-lg text-xs font-bold text-white shadow-sm" style="background:#2C99D6">
