@@ -8,9 +8,9 @@
                     <div class="w-8 h-8 rounded-xl flex items-center justify-center border-2 border-slate-900 bg-white shadow-[2px_2px_0px_0px_#0F2942]">
                         <span class="text-slate-950 font-black text-sm">S</span>
                     </div>
-                    <div class="flex items-baseline gap-1.5">
-                        <span class="text-lg font-black tracking-tight text-slate-950">SKENA</span>
-                        <span class="hidden sm:inline text-[10px] font-mono text-slate-400 uppercase tracking-widest">Marketplace</span>
+                    <div class="flex flex-col">
+                        <span class="text-base font-black tracking-tight text-slate-950 leading-tight">SKENA</span>
+                        <span class="text-[9px] font-bold tracking-wider uppercase text-slate-500 font-mono">Skill Exchange Network</span>
                     </div>
                 </a>
 

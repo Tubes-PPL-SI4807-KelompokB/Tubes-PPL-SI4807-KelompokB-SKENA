@@ -7,8 +7,8 @@
                     <span class="text-white font-black text-xs">S</span>
                 </div>
                 <div>
-                    <p class="text-sm font-black tracking-tight text-gray-900">SKENA</p>
-                    <p class="text-xs text-gray-400">Marketplace Jasa Kreatif Mahasiswa</p>
+                    <p class="text-sm font-black tracking-tight text-slate-900 leading-none">SKENA</p>
+                    <p class="text-[11px] text-slate-500 font-medium mt-0.5">Skill Exchange Network — Marketplace Jasa Kreatif Mahasiswa</p>
                 </div>
             </div>
             {{-- Links --}}

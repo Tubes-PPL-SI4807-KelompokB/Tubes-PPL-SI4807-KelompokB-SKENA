@@ -33,8 +33,8 @@
                 <span class="text-white font-black text-sm">S</span>
             </div>
             <div>
-                <span class="text-white font-black text-base tracking-tight">SKENA</span>
-                <p class="text-blue-300 text-xs font-medium leading-none">Admin Panel</p>
+                <span class="text-white font-black text-base tracking-tight leading-none">SKENA</span>
+                <p class="text-blue-300 text-[10px] font-medium leading-none mt-0.5">Skill Exchange Network</p>
             </div>
         </div>
 

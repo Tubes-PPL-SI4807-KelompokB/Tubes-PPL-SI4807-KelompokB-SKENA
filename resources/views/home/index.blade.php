@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', 'SKENA — Marketplace Jasa Kreatif Mahasiswa')
+@section('title', 'SKENA (Skill Exchange Network) — Marketplace Jasa Kreatif Mahasiswa')
 
 @section('content')
 
@@ -7,7 +7,7 @@
 <div class="border-b border-slate-200 bg-white py-2 px-4 text-center">
     <div class="max-w-7xl mx-auto flex items-center justify-center gap-2 text-xs text-slate-600">
         <span class="inline-block w-2 h-2 rounded-full" style="background:#EB2E33"></span>
-        <span class="font-bold text-slate-900">SKENA v1.0 Live</span> — Platform jasa kreatif khusus mahasiswa terverifikasi KTM pertama di Indonesia.
+        <span class="font-bold text-slate-900">SKENA (Skill Exchange Network)</span> — Platform jasa kreatif khusus mahasiswa terverifikasi KTM se-Indonesia.
         <a href="{{ route('register') }}?role=freelancer" class="hidden sm:inline font-bold underline hover:text-brand-blue ml-1" style="color:#2C99D6">Daftar jadi kreator →</a>
     </div>
 </div>
@@ -21,18 +21,18 @@
             <div class="lg:col-span-7">
                 <div class="inline-flex items-center gap-2 px-3 py-1 rounded-md border border-slate-200 bg-slate-50 text-[11px] font-mono uppercase tracking-wider text-slate-700 mb-6">
                     <span class="w-2 h-2 rounded-full" style="background:#2C99D6"></span>
-                    Verified Student Marketplace
+                    SKENA — Skill Exchange Network
                 </div>
 
                 <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-950 tracking-tight leading-[1.08] mb-6">
-                    Sewa talenta kreatif mahasiswa.
+                    Skill Exchange Network.
                     <span class="block text-transparent bg-clip-text" style="background-image: linear-gradient(135deg, #0F2942 30%, #2C99D6 100%);">
-                        Karya orisinil, harga masuk akal.
+                        Jasa Kreatif Mahasiswa.
                     </span>
                 </h1>
 
                 <p class="text-base sm:text-lg text-slate-600 leading-relaxed max-w-xl mb-8 font-normal">
-                    Pesan jasa logo, packaging, UI/UX Figma, hingga video TikTok langsung dari mahasiswa DKV, Multimedia, dan IT berbakat. Bebas markup agensi, dilindungi rekening bersama.
+                    <strong>SKENA (Skill Exchange Network)</strong> memberdayakan talenta mahasiswa DKV, Multimedia, dan IT berbakat se-Indonesia. Pesan jasa logo, branding, UI/UX Figma, hingga video TikTok dengan harga mahasiswa dan proteksi rekening bersama.
                 </p>
 
                 {{-- Embedded Search Tool --}}
