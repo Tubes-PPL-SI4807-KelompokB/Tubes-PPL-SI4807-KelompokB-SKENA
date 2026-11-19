@@ -9,7 +9,23 @@ return new class extends Migration {
     {
         Schema::create('negotiations', function (Blueprint $table) {
             $table->id();
-            // TODO: definisikan kolom tabel 'negotiations' sesuai ERD
+
+            // Pesanan yang sedang dinegosiasikan
+            $table->foreignId('order_id')
+                ->constrained('orders')
+                ->restrictOnDelete();
+
+            // Pengguna yang mengajukan penawaran
+            $table->foreignId('pengaju_id')
+                ->constrained('users')
+                ->restrictOnDelete();
+
+            // Harga yang ditawarkan
+            $table->decimal('harga_tawar', 12, 2);
+
+            // Status penawaran
+            $table->string('status', 30)->default('pending');
+
             $table->timestamps();
         });
     }
