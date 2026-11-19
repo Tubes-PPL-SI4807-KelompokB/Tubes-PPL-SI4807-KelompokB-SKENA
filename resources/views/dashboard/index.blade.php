@@ -67,7 +67,7 @@
             @endif
         </div>
         @if($user->student_verification_status !== 'pending')
-        <a href="{{ route('profile.edit', 1) }}"
+        <a href="{{ route('profile.edit', $user->id) }}"
            class="shrink-0 px-4 py-2 text-xs font-bold text-white rounded-lg transition-all hover:opacity-90"
            style="background:#2C99D6">
             Lengkapi Data
