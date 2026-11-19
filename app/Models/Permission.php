@@ -12,8 +12,13 @@ class Permission extends Model
     protected $table = 'permissions';
 
     protected $fillable = [
-        // TODO: definisikan kolom yang dapat diisi
+        'name',
+        'display_name',
+        'description',
     ];
 
-    // TODO: tambahkan relasi Eloquent sesuai ERD
+    public function roles()
+    {
+        return $this->belongsToMany(Role::class, 'role_permissions');
+    }
 }

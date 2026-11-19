@@ -12,8 +12,21 @@ class Profile extends Model
     protected $table = 'profiles';
 
     protected $fillable = [
-        // TODO: definisikan kolom yang dapat diisi
+        'user_id',
+        'headline',
+        'bio',
+        'avatar',
+        'banner',
+        'city',
+        'website',
+        'instagram',
+        'linkedin',
+        'github',
+        'hourly_rate',
     ];
 
-    // TODO: tambahkan relasi Eloquent sesuai ERD
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

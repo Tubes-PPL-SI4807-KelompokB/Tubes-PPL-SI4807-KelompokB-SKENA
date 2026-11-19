@@ -10,10 +10,16 @@ class CheckRole
 {
     public function handle(Request $request, Closure $next, string ...$roles): Response
     {
-        // TODO: cek role user (admin, freelancer, client)
-        if (!$request->user() || !in_array($request->user()->role?->name, $roles)) {
-            abort(403, 'Akses ditolak.');
+        $user = $request->user();
+
+        if (!$user) {
+            return redirect()->route('login')->with('error', 'Silakan login terlebih dahulu.');
         }
+
+        if (!$user->role || !in_array($user->role->name, $roles)) {
+            abort(403, 'Akses ditolak. Halaman ini hanya untuk role: ' . implode(', ', $roles));
+        }
+
         return $next($request);
     }
 }

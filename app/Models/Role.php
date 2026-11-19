@@ -12,8 +12,18 @@ class Role extends Model
     protected $table = 'roles';
 
     protected $fillable = [
-        // TODO: definisikan kolom yang dapat diisi
+        'name',
+        'display_name',
+        'description',
     ];
 
-    // TODO: tambahkan relasi Eloquent sesuai ERD
+    public function users()
+    {
+        return $this->hasMany(User::class);
+    }
+
+    public function permissions()
+    {
+        return $this->belongsToMany(Permission::class, 'role_permissions');
+    }
 }
