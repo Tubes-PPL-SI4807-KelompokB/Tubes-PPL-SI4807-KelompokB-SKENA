@@ -9,7 +9,9 @@ return new class extends Migration {
     {
         Schema::create('permissions', function (Blueprint $table) {
             $table->id();
-            // TODO: definisikan kolom tabel 'permissions' sesuai ERD
+            $table->string('name')->unique();          // e.g. manage_users, verify_students, create_service
+            $table->string('display_name');
+            $table->text('description')->nullable();
             $table->timestamps();
         });
     }

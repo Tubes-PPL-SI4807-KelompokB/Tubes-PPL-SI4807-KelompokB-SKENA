@@ -9,7 +9,9 @@ return new class extends Migration {
     {
         Schema::create('roles', function (Blueprint $table) {
             $table->id();
-            // TODO: definisikan kolom tabel 'roles' sesuai ERD
+            $table->string('name')->unique();          // admin, freelancer, client
+            $table->string('display_name');           // Administrator, Freelancer Mahasiswa, Klien
+            $table->text('description')->nullable();
             $table->timestamps();
         });
     }
