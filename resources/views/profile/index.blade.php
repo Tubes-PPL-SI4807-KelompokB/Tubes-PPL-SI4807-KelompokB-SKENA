@@ -7,8 +7,8 @@
     {{-- Profile Banner & Header Card --}}
     <div class="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden mb-6">
         {{-- Banner Gradient --}}
-        <div class="h-36 sm:h-44 w-full relative" style="background:linear-gradient(135deg,#0F2942 0%,#2C99D6 100%)">
-            <div class="absolute -bottom-8 right-8 w-40 h-40 rounded-full opacity-20 pointer-events-none" style="background:#EB2E33"></div>
+        <div class="h-36 sm:h-44 w-full relative" style="background:linear-gradient(135deg,#0F172A 0%,#3f749c 100%)">
+            <div class="absolute -bottom-8 right-8 w-40 h-40 rounded-full opacity-20 pointer-events-none" style="background:#E0ECF6"></div>
         </div>
 
         {{-- Profile Details --}}
@@ -22,7 +22,7 @@
                         <div class="flex items-center gap-2 flex-wrap">
                             <h1 class="text-2xl font-black text-gray-900">{{ $user->name }}</h1>
                             @if($user->isVerifiedStudent())
-                                <span class="inline-flex items-center gap-1 text-xs font-bold text-white px-2.5 py-0.5 rounded-full" style="background:#2C99D6">
+                                <span class="inline-flex items-center gap-1 text-xs font-bold text-white px-2.5 py-0.5 rounded-full" style="background:#3f749c">
                                     <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
                                     Mahasiswa Terverifikasi
                                 </span>
@@ -40,7 +40,7 @@
 
                 <a href="{{ route('profile.edit', $user->id) }}"
                    class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold text-white transition-all hover:opacity-90 shadow-sm shrink-0"
-                   style="background:#2C99D6">
+                   style="background:#3f749c">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
                     Edit Profil
                 </a>
@@ -73,7 +73,7 @@
                     Bergabung {{ $user->created_at->format('M Y') }}
                 </span>
                 @if($user->profile?->hourly_rate)
-                    <span class="flex items-center gap-1 font-bold" style="color:#2C99D6">
+                    <span class="flex items-center gap-1 font-bold" style="color:#3f749c">
                         Rp {{ number_format($user->profile->hourly_rate, 0, ',', '.') }} / jam
                     </span>
                 @endif

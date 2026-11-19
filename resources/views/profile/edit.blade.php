@@ -90,7 +90,7 @@
             @if($user->isFreelancer())
             <div class="border-t border-gray-100 pt-6">
                 <div class="flex items-center gap-2 mb-4">
-                    <span class="w-2.5 h-2.5 rounded-full" style="background:#2C99D6"></span>
+                    <span class="w-2.5 h-2.5 rounded-full" style="background:#3f749c"></span>
                     <h2 class="text-sm font-black text-gray-900 uppercase tracking-wide">Data Kemahasiswaan & KTM</h2>
                 </div>
 
@@ -130,7 +130,7 @@
             <div class="border-t border-gray-100 pt-6 flex items-center gap-3">
                 <button type="submit"
                         class="px-6 py-3 rounded-xl text-sm font-bold text-white transition-all hover:opacity-90 active:scale-[0.98] shadow-sm"
-                        style="background:#2C99D6">
+                        style="background:#3f749c">
                     Simpan Perubahan
                 </button>
                 <a href="{{ route('profile.index') }}"

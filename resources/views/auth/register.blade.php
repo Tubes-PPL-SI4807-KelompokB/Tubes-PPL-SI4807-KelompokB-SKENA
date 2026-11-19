@@ -1,184 +1,364 @@
-@extends('layouts.app')
-@section('title', 'Daftar Akun — SKENA')
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Daftar Akun — SKENA</title>
+    @include('layouts.partials.design-tokens', ['designRadius' => true])
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,0&display=swap" rel="stylesheet">
+    <style>
+        @layer base { html,body { margin:0; padding:0; } body { overscroll-behavior:none; } }
+        ::-webkit-scrollbar { display:none; }
+        * { font-family: 'Outfit', sans-serif; }
+    </style>
 
-@section('content')
-<div class="min-h-screen py-10 px-4" style="background:#F8FAFC">
-    <div class="max-w-2xl mx-auto">
+</head>
+<body style="background:linear-gradient(180deg,#E3E4E6 0,#E3E4E6 38%,#D6E8F7 100%)" class="font-body-md text-on-surface antialiased min-h-screen flex flex-col justify-between">
 
-        {{-- Header --}}
-        <div class="text-center mb-8">
-            <a href="{{ route('home') }}" class="inline-flex items-center gap-2 mb-6">
-                <div class="w-9 h-9 rounded-xl flex items-center justify-center" style="background:#2C99D6">
-                    <span class="text-white font-black">S</span>
-                </div>
-                <span class="text-xl font-black text-gray-900">SKENA</span>
-            </a>
-            <h1 class="text-2xl font-black text-gray-900 mb-1">Buat Akun Baru</h1>
-            <p class="text-sm text-gray-500">Bergabung dengan ribuan mahasiswa kreatif di Indonesia.</p>
-        </div>
+{{-- Header: wordmark di tengah (DESIGN.md) --}}
+<header class="w-full px-6 lg:px-12">
+    <div class="max-w-6xl mx-auto h-[100px] grid grid-cols-[1fr_auto_1fr] items-center">
+        <a href="{{ route('home') }}" class="justify-self-start inline-flex items-center gap-2 text-label-md text-on-surface-variant hover:text-primary transition-colors">
+            <span class="material-symbols-outlined text-[18px]">arrow_back</span><span class="hidden sm:inline">Beranda</span>
+        </a>
+        <a href="{{ route('home') }}" class="text-[32px] leading-none font-bold tracking-[-0.02em] text-primary" aria-label="SKENA">SKENA</a>
+        <span class="justify-self-end text-label-md text-on-surface-variant hidden sm:block">Skill Exchange Network</span>
+    </div>
+</header>
 
-        {{-- Role Selector --}}
-        <div class="bg-white rounded-2xl border border-gray-200 p-6 mb-6" x-data="{ role: '{{ $selectedRole ?? 'freelancer' }}' }">
-            <p class="text-sm font-bold text-gray-700 mb-3">Saya ingin bergabung sebagai:</p>
-            <div class="grid grid-cols-2 gap-3 mb-6">
-                {{-- Freelancer Option --}}
-                <label class="relative cursor-pointer">
-                    <input type="radio" name="role_selector" value="freelancer" x-model="role" class="sr-only peer">
-                    <div class="border-2 rounded-xl p-4 transition-all peer-checked:border-blue-500 peer-checked:bg-blue-50 border-gray-200 hover:border-gray-300">
-                        <div class="w-10 h-10 rounded-lg flex items-center justify-center mb-3" style="background:linear-gradient(135deg,#2C99D6,#0F2942)">
-                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+<main class="w-full flex-1 flex items-center justify-center px-6 pb-space-xl">
+    <div class="flex flex-col w-full max-w-7xl mx-auto px-2 sm:px-6">
+
+        {{-- Registration Shell --}}
+        <div class="w-full bg-surface-container-lowest rounded-[28px] shadow-sm overflow-hidden p-3 lg:p-4 my-2">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6 min-h-[700px] items-stretch">
+
+                {{-- LEFT BRAND PANEL --}}
+                <div class="lg:col-span-5 relative rounded-[24px] bg-gradient-to-br from-hero-start to-primary overflow-hidden p-8 lg:p-10 flex flex-col justify-between text-on-primary">
+                    <svg class="absolute bottom-0 right-0 w-full h-48 opacity-20 pointer-events-none" fill="none" preserveAspectRatio="none" viewBox="0 0 500 220">
+                        <path d="M0,120 C150,220 300,40 500,140 L500,220 L0,220 Z" fill="#FFFFFF"></path>
+                    </svg>
+
+                    <div class="relative z-10">
+                        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/20 text-on-primary text-label-sm font-label-sm tracking-wide uppercase shadow-sm">
+                            <span class="w-2 h-2 rounded-full bg-white animate-pulse"></span>
+                            Koneksi Kampus Terpercaya
                         </div>
-                        <p class="font-bold text-sm text-gray-900">Freelancer Mahasiswa</p>
-                        <p class="text-xs text-gray-500 mt-1">Tawarkan jasa kreatif & dapatkan penghasilan</p>
-                        <div class="absolute top-3 right-3 w-5 h-5 rounded-full border-2 border-blue-500 bg-blue-500 items-center justify-center peer-checked:flex hidden" style="background:#2C99D6">
-                            <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                        <div class="mt-8 space-y-3">
+                            <h1 class="font-display text-display-mobile text-on-primary leading-tight font-bold tracking-tight">
+                                Ubah Skill<br/>Jadi Penghasilan
+                            </h1>
+                            <p class="font-body-lg text-body-lg text-on-primary/90 max-w-sm">
+                                Marketplace peer-to-peer jasa mikro, barter skill, dan kolaborasi kreatif khusus mahasiswa aktif se-Indonesia.
+                            </p>
                         </div>
-                    </div>
-                </label>
-
-                {{-- Client Option --}}
-                <label class="relative cursor-pointer">
-                    <input type="radio" name="role_selector" value="client" x-model="role" class="sr-only peer">
-                    <div class="border-2 rounded-xl p-4 transition-all peer-checked:border-red-400 peer-checked:bg-red-50 border-gray-200 hover:border-gray-300">
-                        <div class="w-10 h-10 rounded-lg flex items-center justify-center mb-3" style="background:linear-gradient(135deg,#EB2E33,#8B0000)">
-                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-                        </div>
-                        <p class="font-bold text-sm text-gray-900">Klien / Pemberi Kerja</p>
-                        <p class="text-xs text-gray-500 mt-1">Cari & rekrut talenta kreatif terbaik</p>
-                    </div>
-                </label>
-            </div>
-
-            {{-- Error Bag --}}
-            @if($errors->any())
-            <div class="mb-5 bg-red-50 border border-red-200 rounded-xl p-4">
-                <p class="text-xs font-bold text-red-700 mb-2">Mohon perbaiki data berikut:</p>
-                <ul class="text-xs text-red-600 space-y-1">
-                    @foreach($errors->all() as $error)
-                        <li class="flex items-center gap-2">
-                            <span class="w-1 h-1 rounded-full bg-red-500 inline-block"></span>{{ $error }}
-                        </li>
-                    @endforeach
-                </ul>
-            </div>
-            @endif
-
-            <form method="POST" action="{{ route('register') }}" enctype="multipart/form-data" class="space-y-5">
-                @csrf
-                <input type="hidden" name="role" :value="role">
-
-                {{-- Data Pribadi --}}
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div class="sm:col-span-2">
-                        <label class="block text-sm font-semibold text-gray-700 mb-1.5">Nama Lengkap</label>
-                        <input type="text" name="name" value="{{ old('name') }}"
-                               placeholder="Nama sesuai KTM/KTP" required
-                               class="w-full border rounded-xl px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 outline-none focus:ring-2 @error('name') border-red-400 bg-red-50 focus:ring-red-200 @else border-gray-200 bg-white focus:border-blue-400 focus:ring-blue-100 @enderror">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1.5">Email</label>
-                        <input type="email" name="email" value="{{ old('email') }}"
-                               placeholder="email@kampus.ac.id" required
-                               class="w-full border rounded-xl px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 outline-none focus:ring-2 @error('email') border-red-400 bg-red-50 focus:ring-red-200 @else border-gray-200 bg-white focus:border-blue-400 focus:ring-blue-100 @enderror">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1.5">Nomor HP</label>
-                        <input type="tel" name="phone" value="{{ old('phone') }}"
-                               placeholder="08xxxxxxxxxx"
-                               class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 bg-white">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1.5">Password</label>
-                        <div class="relative" x-data="{ show: false }">
-                            <input :type="show ? 'text' : 'password'" name="password"
-                                   placeholder="Min. 8 karakter" required
-                                   class="w-full border rounded-xl px-4 py-2.5 pr-10 text-sm text-gray-900 placeholder-gray-400 outline-none focus:ring-2 @error('password') border-red-400 bg-red-50 focus:ring-red-200 @else border-gray-200 bg-white focus:border-blue-400 focus:ring-blue-100 @enderror">
-                            <button type="button" @click="show = !show" class="absolute right-3 top-3 text-gray-400 hover:text-gray-600">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-                            </button>
-                        </div>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1.5">Konfirmasi Password</label>
-                        <input type="password" name="password_confirmation"
-                               placeholder="Ulangi password" required
-                               class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 bg-white">
-                    </div>
-                </div>
-
-                {{-- Data Mahasiswa (hanya jika role = freelancer) --}}
-                <div x-show="role === 'freelancer'"
-                     x-transition:enter="transition ease-out duration-200"
-                     x-transition:enter-start="opacity-0 -translate-y-2"
-                     x-transition:enter-end="opacity-100 translate-y-0"
-                     class="border border-blue-200 rounded-xl p-4 bg-blue-50 space-y-4">
-
-                    <div class="flex items-center gap-2 mb-1">
-                        <div class="w-5 h-5 rounded flex items-center justify-center" style="background:#2C99D6">
-                            <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
-                        </div>
-                        <p class="text-sm font-bold" style="color:#0F2942">Verifikasi Identitas Mahasiswa</p>
-                    </div>
-                    <p class="text-xs text-blue-700">Data ini diperlukan untuk mendapatkan badge <strong>Mahasiswa Terverifikasi</strong> yang meningkatkan kepercayaan klien terhadap profil Anda.</p>
-
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-xs font-semibold text-gray-700 mb-1">NIM / Nomor Mahasiswa <span class="text-red-500">*</span></label>
-                            <input type="text" name="nim" value="{{ old('nim') }}"
-                                   placeholder="12022XXXXXXX"
-                                   class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-900 outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 bg-white">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-gray-700 mb-1">Universitas / Politeknik <span class="text-red-500">*</span></label>
-                            <input type="text" name="university" value="{{ old('university') }}"
-                                   placeholder="Telkom University"
-                                   class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-900 outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 bg-white">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-gray-700 mb-1">Fakultas</label>
-                            <input type="text" name="faculty" value="{{ old('faculty') }}"
-                                   placeholder="Fakultas Industri Kreatif"
-                                   class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-900 outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 bg-white">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-gray-700 mb-1">Program Studi</label>
-                            <input type="text" name="major" value="{{ old('major') }}"
-                                   placeholder="Desain Komunikasi Visual"
-                                   class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-900 outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 bg-white">
-                        </div>
-                        <div class="sm:col-span-2">
-                            <label class="block text-xs font-semibold text-gray-700 mb-1">Upload Foto / Scan KTM (opsional, max 4MB)</label>
-                            <div class="border-2 border-dashed border-blue-200 rounded-xl px-4 py-5 text-center bg-white hover:border-blue-400 transition-colors cursor-pointer">
-                                <input type="file" name="ktm" id="ktm" accept=".jpg,.jpeg,.png,.pdf" class="sr-only"
-                                       onchange="document.getElementById('ktm-label').textContent = this.files[0]?.name || 'Belum ada file dipilih'">
-                                <label for="ktm" class="cursor-pointer">
-                                    <svg class="w-8 h-8 mx-auto mb-2 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                                    <p id="ktm-label" class="text-xs text-gray-500">Klik untuk pilih file KTM (JPG, PNG, PDF)</p>
-                                </label>
+                        {{-- Feature Chips --}}
+                        <div class="mt-8 flex flex-wrap gap-2.5">
+                            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/95 text-on-background font-label-md text-label-md shadow-sm">
+                                <span class="material-symbols-outlined text-primary-container text-[18px]">payments</span>
+                                <span>Harga Ramah Mahasiswa</span>
+                            </div>
+                            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/95 text-on-background font-label-md text-label-md shadow-sm">
+                                <span class="material-symbols-outlined text-primary-container text-[18px]">verified_user</span>
+                                <span>Komunitas Tepercaya</span>
+                            </div>
+                            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/95 text-on-background font-label-md text-label-md shadow-sm">
+                                <span class="material-symbols-outlined text-primary-container text-[18px]">star_rate</span>
+                                <span>Portofolio & Rating Real</span>
                             </div>
                         </div>
                     </div>
+
+                    {{-- University Badges --}}
+                    <div class="relative z-10 pt-10 mt-8">
+                        <p class="font-label-sm text-label-sm uppercase tracking-wider text-on-primary/80 mb-2.5">
+                            Didukung Mahasiswa Kampus Unggulan
+                        </p>
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <span class="px-3 py-1 rounded-full bg-white/20 text-label-sm font-label-sm text-on-primary">Telkom Univ</span>
+                            <span class="px-3 py-1 rounded-full bg-white/20 text-label-sm font-label-sm text-on-primary">Univ. Indonesia</span>
+                            <span class="px-3 py-1 rounded-full bg-white/20 text-label-sm font-label-sm text-on-primary">ITB</span>
+                            <span class="px-3 py-1 rounded-full bg-white/20 text-label-sm font-label-sm text-on-primary">UGM</span>
+                            <span class="px-3 py-1 rounded-full bg-white/20 text-label-sm font-label-sm text-on-primary">+45 Kampus Lain</span>
+                        </div>
+                    </div>
                 </div>
 
-                {{-- Submit --}}
-                <button type="submit"
-                        class="w-full py-3 rounded-xl text-sm font-bold text-white transition-all hover:opacity-90 active:scale-[0.98] shadow-sm"
-                        style="background:#2C99D6">
-                    Buat Akun SKENA
-                </button>
-            </form>
+                {{-- RIGHT FORM --}}
+                <div class="lg:col-span-7 flex flex-col justify-center px-4 sm:px-8 lg:px-12 py-6">
+                    {{-- Form Header --}}
+                    <div class="mb-6">
+                        <div class="flex items-center justify-between gap-3">
+                            <div>
+                                <h2 class="font-headline-lg text-headline-lg text-on-background tracking-tight">Buat Akun Mahasiswa</h2>
+                                <p class="font-body-md text-body-md text-on-surface-variant mt-1">
+                                    Gunakan email resmi kampusmu untuk bergabung di SKENA.
+                                </p>
+                            </div>
+                            <div class="hidden sm:flex w-11 h-11 rounded-full bg-surface-container-low items-center justify-center text-primary-container">
+                                <span class="material-symbols-outlined text-[24px]">school</span>
+                            </div>
+                        </div>
+                        {{-- Info pill --}}
+                        <div class="mt-4 p-3.5 rounded-[16px] bg-surface-container-low flex items-start gap-3">
+                            <span class="material-symbols-outlined text-primary-container text-[20px] mt-0.5">swap_horiz</span>
+                            <p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+                                <span class="font-semibold text-primary">Satu akun multifungsi:</span> Kamu otomatis bisa membuka jasa keahlian sendiri sekaligus menyewa bantuan dari mahasiswa lain.
+                            </p>
+                        </div>
+                    </div>
+
+                    {{-- Validation Errors --}}
+                    @if ($errors->any())
+                        <div class="mb-5 p-4 rounded-2xl bg-error-container text-on-error-container flex items-start gap-3">
+                            <span class="material-symbols-outlined text-error text-[20px] mt-0.5 shrink-0" style="font-variation-settings: 'FILL' 1;">error</span>
+                            <div>
+                                <p class="font-label-lg text-label-lg font-bold mb-1">Mohon perbaiki kesalahan berikut:</p>
+                                @foreach($errors->all() as $error)
+                                    <p class="font-body-sm text-body-sm">• {{ $error }}</p>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endif
+
+                    {{-- Registration Form --}}
+                    <form class="space-y-4" id="registerForm" method="POST" action="{{ route('register') }}" enctype="multipart/form-data"
+                        x-data="{
+                            role: '{{ old('role', 'client') }}',
+                            showPassword: false,
+                            showConfirm: false,
+                            passwordStrength: 0,
+                            checkStrength(val) {
+                                let s = 0;
+                                if (val.length >= 8) s++;
+                                if (/[A-Z]/.test(val)) s++;
+                                if (/[0-9]/.test(val)) s++;
+                                if (/[^A-Za-z0-9]/.test(val)) s++;
+                                this.passwordStrength = s;
+                            }
+                        }">
+                        @csrf
+
+                        {{-- Role selector --}}
+                        <div class="space-y-1.5">
+                            <label class="block font-label-md text-label-md text-on-surface">Daftar Sebagai</label>
+                            <div class="grid grid-cols-3 gap-2">
+                                <button type="button" @click="role='student'"
+                                    :class="role==='student' ? 'bg-primary-container text-on-primary shadow-sm' : 'bg-surface-container-low text-on-surface-variant hover:bg-surface-container'"
+                                    class="flex flex-col items-center gap-1 p-3 rounded-2xl transition-all">
+                                    <span class="material-symbols-outlined text-[22px]">school</span>
+                                    <span class="font-label-sm text-label-sm">Mahasiswa</span>
+                                </button>
+                                <button type="button" @click="role='freelancer'"
+                                    :class="role==='freelancer' ? 'bg-primary-container text-on-primary shadow-sm' : 'bg-surface-container-low text-on-surface-variant hover:bg-surface-container'"
+                                    class="flex flex-col items-center gap-1 p-3 rounded-2xl transition-all">
+                                    <span class="material-symbols-outlined text-[22px]">work</span>
+                                    <span class="font-label-sm text-label-sm">Freelancer</span>
+                                </button>
+                                <button type="button" @click="role='client'"
+                                    :class="role==='client' ? 'bg-primary-container text-on-primary shadow-sm' : 'bg-surface-container-low text-on-surface-variant hover:bg-surface-container'"
+                                    class="flex flex-col items-center gap-1 p-3 rounded-2xl transition-all">
+                                    <span class="material-symbols-outlined text-[22px]">person_search</span>
+                                    <span class="font-label-sm text-label-sm">Client</span>
+                                </button>
+                            </div>
+                            <input type="hidden" name="role" :value="role"/>
+                        </div>
+
+                        {{-- Nama Lengkap --}}
+                        <div class="space-y-1.5">
+                            <label class="block font-label-md text-label-md text-on-surface" for="fullname">Nama Lengkap</label>
+                            <div class="relative flex items-center">
+                                <span class="absolute left-4 text-on-surface-variant material-symbols-outlined text-[20px]">person</span>
+                                <input class="w-full h-12 pl-12 pr-4 rounded-full bg-surface-container-lowest text-on-surface font-body-md text-body-md shadow-sm placeholder:text-outline-variant focus:outline-none focus:ring-2 focus:ring-primary-container transition-all @error('name') ring-2 ring-error @enderror"
+                                    id="fullname" name="name" placeholder="Contoh: Muhammad Farhan Pratama"
+                                    type="text" value="{{ old('name') }}" required/>
+                            </div>
+                            @error('name') <p class="font-body-sm text-body-sm text-error ml-4">{{ $message }}</p> @enderror
+                        </div>
+
+                        {{-- Email --}}
+                        <div class="space-y-1.5">
+                            <label class="block font-label-md text-label-md text-on-surface" for="email">Email</label>
+                            <div class="relative flex items-center">
+                                <span class="absolute left-4 text-on-surface-variant material-symbols-outlined text-[20px]">alternate_email</span>
+                                <input class="w-full h-12 pl-12 pr-4 rounded-full bg-surface-container-lowest text-on-surface font-body-md text-body-md shadow-sm placeholder:text-outline-variant focus:outline-none focus:ring-2 focus:ring-primary-container transition-all @error('email') ring-2 ring-error @enderror"
+                                    id="email" name="email" placeholder="nama@student.telkomuniversity.ac.id"
+                                    type="email" value="{{ old('email') }}" required/>
+                            </div>
+                            @error('email') <p class="font-body-sm text-body-sm text-error ml-4">{{ $message }}</p> @enderror
+                        </div>
+
+                        {{-- NIM (hanya jika student/freelancer) --}}
+                        <div class="space-y-1.5" x-show="role === 'student' || role === 'freelancer'" x-transition>
+                            <label class="block font-label-md text-label-md text-on-surface" for="nim">NIM (Nomor Induk Mahasiswa)</label>
+                            <div class="relative flex items-center">
+                                <span class="absolute left-4 text-on-surface-variant material-symbols-outlined text-[20px]">badge</span>
+                                <input class="w-full h-12 pl-12 pr-4 rounded-full bg-surface-container-lowest text-on-surface font-body-md text-body-md shadow-sm placeholder:text-outline-variant focus:outline-none focus:ring-2 focus:ring-primary-container transition-all"
+                                    id="nim" name="nim" placeholder="1301210000"
+                                    type="text" value="{{ old('nim') }}"/>
+                            </div>
+                            @error('nim') <p class="font-body-sm text-body-sm text-error ml-4">{{ $message }}</p> @enderror
+                        </div>
+
+                        {{-- Universitas (hanya jika student/freelancer) --}}
+                        <div class="space-y-1.5" x-show="role === 'student' || role === 'freelancer'" x-transition>
+                            <label class="block font-label-md text-label-md text-on-surface" for="university">Universitas</label>
+                            <div class="relative flex items-center">
+                                <span class="absolute left-4 text-on-surface-variant material-symbols-outlined text-[20px]">account_balance</span>
+                                <input class="w-full h-12 pl-12 pr-4 rounded-full bg-surface-container-lowest text-on-surface font-body-md text-body-md shadow-sm placeholder:text-outline-variant focus:outline-none focus:ring-2 focus:ring-primary-container transition-all"
+                                    id="university" name="university" placeholder="Telkom University"
+                                    type="text" value="{{ old('university') }}"/>
+                            </div>
+                        </div>
+
+                        {{-- KTM Upload (hanya jika student/freelancer) --}}
+                        <div class="space-y-1.5" x-show="role === 'student' || role === 'freelancer'" x-transition>
+                            <label class="block font-label-md text-label-md text-on-surface" for="ktm">
+                                Kartu Tanda Mahasiswa (KTM)
+                                <span class="text-outline font-normal">(Opsional, untuk verifikasi lebih cepat)</span>
+                            </label>
+                            <div class="relative flex items-center">
+                                <span class="absolute left-4 text-on-surface-variant material-symbols-outlined text-[20px]">id_card</span>
+                                <input class="w-full h-12 pl-12 pr-4 rounded-full bg-surface-container-lowest text-on-surface font-body-md text-body-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-container transition-all file:border-0 file:bg-transparent file:text-sm file:font-medium"
+                                    id="ktm" name="ktm_image" type="file" accept="image/*,.pdf"/>
+                            </div>
+                            @error('ktm_image') <p class="font-body-sm text-body-sm text-error ml-4">{{ $message }}</p> @enderror
+                        </div>
+
+                        {{-- Kata Sandi --}}
+                        <div class="space-y-1.5">
+                            <label class="block font-label-md text-label-md text-on-surface" for="password">Kata Sandi</label>
+                            <div class="relative flex items-center">
+                                <span class="absolute left-4 text-on-surface-variant material-symbols-outlined text-[20px]">lock</span>
+                                <input class="w-full h-12 pl-12 pr-12 rounded-full bg-surface-container-lowest text-on-surface font-body-md text-body-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-container transition-all @error('password') ring-2 ring-error @enderror"
+                                    id="password" name="password" placeholder="Min. 8 karakter"
+                                    :type="showPassword ? 'text' : 'password'"
+                                    @input="checkStrength($event.target.value)"
+                                    required/>
+                                <button aria-label="Toggle password visibility" @click="showPassword = !showPassword"
+                                    class="absolute right-3.5 text-on-surface-variant hover:text-primary transition-colors flex items-center justify-center p-1 rounded-full hover:bg-surface-container-low" type="button">
+                                    <span class="material-symbols-outlined text-[20px]" x-text="showPassword ? 'visibility_off' : 'visibility'">visibility_off</span>
+                                </button>
+                            </div>
+                            {{-- Password Strength Bar --}}
+                            <div class="pt-1.5 px-1 space-y-1">
+                                <div class="flex items-center justify-between text-label-sm font-label-sm">
+                                    <span class="text-on-surface-variant">Kekuatan Sandi</span>
+                                    <span class="font-bold flex items-center gap-1"
+                                        :class="passwordStrength < 2 ? 'text-error' : passwordStrength < 3 ? 'text-yellow-500' : 'text-green-600'">
+                                        <span class="w-1.5 h-1.5 rounded-full"
+                                            :class="passwordStrength < 2 ? 'bg-error' : passwordStrength < 3 ? 'bg-yellow-500' : 'bg-green-600'"></span>
+                                        <span x-text="passwordStrength < 2 ? 'Lemah' : passwordStrength < 3 ? 'Sedang' : passwordStrength < 4 ? 'Kuat' : 'Sangat Kuat'">-</span>
+                                    </span>
+                                </div>
+                                <div class="w-full h-1.5 bg-surface-container-high rounded-full overflow-hidden flex gap-1">
+                                    <div class="h-full rounded-full transition-all" :class="passwordStrength >= 1 ? (passwordStrength < 2 ? 'bg-error' : passwordStrength < 3 ? 'bg-yellow-500' : 'bg-green-600') : 'bg-transparent'" style="width:25%"></div>
+                                    <div class="h-full rounded-full transition-all" :class="passwordStrength >= 2 ? (passwordStrength < 3 ? 'bg-yellow-500' : 'bg-green-600') : 'bg-surface-container-high'" style="width:25%"></div>
+                                    <div class="h-full rounded-full transition-all" :class="passwordStrength >= 3 ? 'bg-green-600' : 'bg-surface-container-high'" style="width:25%"></div>
+                                    <div class="h-full rounded-full transition-all" :class="passwordStrength >= 4 ? 'bg-green-600' : 'bg-surface-container-high'" style="width:25%"></div>
+                                </div>
+                            </div>
+                            @error('password') <p class="font-body-sm text-body-sm text-error ml-4">{{ $message }}</p> @enderror
+                        </div>
+
+                        {{-- Konfirmasi Kata Sandi --}}
+                        <div class="space-y-1.5">
+                            <label class="block font-label-md text-label-md text-on-surface" for="password_confirmation">Konfirmasi Kata Sandi</label>
+                            <div class="relative flex items-center">
+                                <span class="absolute left-4 text-on-surface-variant material-symbols-outlined text-[20px]">lock_reset</span>
+                                <input class="w-full h-12 pl-12 pr-12 rounded-full bg-surface-container-lowest text-on-surface font-body-md text-body-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-container transition-all"
+                                    id="password_confirmation" name="password_confirmation" placeholder="Ulangi kata sandi"
+                                    :type="showConfirm ? 'text' : 'password'"
+                                    required/>
+                                <button @click="showConfirm = !showConfirm"
+                                    class="absolute right-3.5 text-on-surface-variant hover:text-primary transition-colors flex items-center justify-center p-1 rounded-full" type="button">
+                                    <span class="material-symbols-outlined text-[20px]" x-text="showConfirm ? 'visibility_off' : 'visibility'">visibility_off</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        {{-- Agreement --}}
+                        <div class="pt-2 flex items-start gap-3">
+                            <input class="w-4 h-4 mt-0.5 rounded accent-primary-container cursor-pointer focus:ring-0" id="terms" required type="checkbox"/>
+                            <label class="font-body-sm text-body-sm text-on-surface-variant cursor-pointer select-none" for="terms">
+                                Saya setuju dengan <a class="text-primary font-semibold hover:underline" href="#">Syarat & Ketentuan</a> serta <a class="text-primary font-semibold hover:underline" href="#">Kebijakan Privasi SKENA</a>.
+                            </label>
+                        </div>
+
+                        {{-- Submit Button --}}
+                        <div class="pt-2">
+                            <button class="group w-full h-12 rounded-full bg-primary hover:bg-primary-hover text-on-primary font-label-lg text-label-lg flex items-center justify-center gap-2 shadow-sm hover:shadow-md transition-all active:scale-[0.99]" type="submit">
+                                <span>Daftar Sekarang</span>
+                                <div class="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center group-hover:translate-x-1 transition-transform">
+                                    <span class="material-symbols-outlined text-[16px] text-on-primary">arrow_forward</span>
+                                </div>
+                            </button>
+                        </div>
+                    </form>
+
+                    {{-- Login Link --}}
+                    <div class="mt-6 pt-4 text-center">
+                        <p class="font-body-md text-body-md text-on-surface-variant">
+                            Sudah punya akun SKENA?
+                            <a class="text-primary font-semibold hover:underline inline-flex items-center gap-0.5 ml-1" href="{{ route('login') }}">
+                                Masuk Sekarang
+                                <span class="material-symbols-outlined text-[16px]">north_east</span>
+                            </a>
+                        </p>
+                    </div>
+                </div>
+
+            </div>
         </div>
 
-        <p class="text-center text-sm text-gray-600 mt-4">
-            Sudah punya akun?
-            <a href="{{ route('login') }}" class="font-semibold hover:underline" style="color:#2C99D6">Masuk di sini</a>
-        </p>
+        {{-- Bottom Feature Row --}}
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 px-2 py-4">
+            <div class="bg-surface-container-lowest rounded-2xl p-3.5 shadow-sm flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-surface-container-low flex items-center justify-center text-primary">
+                    <span class="material-symbols-outlined text-[20px]">shield</span>
+                </div>
+                <div class="min-w-0">
+                    <p class="font-label-md text-label-md text-on-surface truncate">Escrow Mahasiswa</p>
+                    <p class="font-body-sm text-body-sm text-on-surface-variant truncate">Dana aman hingga tugas tuntas</p>
+                </div>
+            </div>
+            <div class="bg-surface-container-lowest rounded-2xl p-3.5 shadow-sm flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-surface-container-low flex items-center justify-center text-primary">
+                    <span class="material-symbols-outlined text-[20px]">workspace_premium</span>
+                </div>
+                <div class="min-w-0">
+                    <p class="font-label-md text-label-md text-on-surface truncate">Portofolio Sahih</p>
+                    <p class="font-body-sm text-body-sm text-on-surface-variant truncate">Karya riil antar rekan kampus</p>
+                </div>
+            </div>
+            <div class="bg-surface-container-lowest rounded-2xl p-3.5 shadow-sm flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-surface-container-low flex items-center justify-center text-primary">
+                    <span class="material-symbols-outlined text-[20px]">currency_exchange</span>
+                </div>
+                <div class="min-w-0">
+                    <p class="font-label-md text-label-md text-on-surface truncate">Tukar Keterampilan</p>
+                    <p class="font-body-sm text-body-sm text-on-surface-variant truncate">Dukungan opsi barter skill</p>
+                </div>
+            </div>
+            <div class="bg-surface-container-lowest rounded-2xl p-3.5 shadow-sm flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-surface-container-low flex items-center justify-center text-primary">
+                    <span class="material-symbols-outlined text-[20px]">bolt</span>
+                </div>
+                <div class="min-w-0">
+                    <p class="font-label-md text-label-md text-on-surface truncate">Verifikasi Cepat</p>
+                    <p class="font-body-sm text-body-sm text-on-surface-variant truncate">Validasi KTM & email kampus</p>
+                </div>
+            </div>
+        </div>
 
-        <p class="text-center text-xs text-gray-400 mt-3">
-            Dengan mendaftar, Anda menyetujui
-            <a href="#" class="underline">Syarat & Ketentuan</a> dan
-            <a href="#" class="underline">Kebijakan Privasi</a> SKENA.
-        </p>
     </div>
-</div>
-@endsection
+</main>
+
+<footer class="w-full py-space-md px-6 text-center">
+    <p class="font-body-sm text-body-sm text-on-surface-variant">© {{ date('Y') }} SKENA — Skill Exchange Network. Khusus Mahasiswa Aktif.</p>
+</footer>
+
+<script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+</body>
+</html>

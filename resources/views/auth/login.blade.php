@@ -1,125 +1,293 @@
-@extends('layouts.app')
-@section('title', 'Masuk ke SKENA — Marketplace Jasa Kreatif Mahasiswa')
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Masuk — SKENA</title>
+    @include('layouts.partials.design-tokens', ['designRadius' => true])
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,0&display=swap" rel="stylesheet">
+    <style>
+        @layer base { html,body { margin:0; padding:0; } body { overscroll-behavior:none; } }
+        ::-webkit-scrollbar { display:none; }
+        * { font-family: 'Outfit', sans-serif; }
+    </style>
 
-@section('content')
-<div class="min-h-[calc(100vh-8rem)] flex items-center justify-center py-12 px-4 sm:px-6" style="background:#F8FAFC">
-    <div class="w-full max-w-md">
+</head>
+<body style="background:linear-gradient(180deg,#E3E4E6 0,#E3E4E6 38%,#D6E8F7 100%)" class="font-body-md text-on-surface antialiased min-h-screen flex flex-col justify-between">
 
-        {{-- Brand Mark --}}
-        <div class="text-center mb-8">
-            <a href="{{ route('home') }}" class="inline-flex items-center gap-2 mb-3">
-                <div class="w-9 h-9 rounded-xl flex items-center justify-center border-2 border-slate-900 bg-white shadow-[2px_2px_0px_0px_#0F2942]">
-                    <span class="text-slate-950 font-black text-sm">S</span>
-                </div>
-                <span class="text-xl font-extrabold tracking-tight text-slate-950">SKENA</span>
-            </a>
-            <h1 class="text-2xl font-black text-slate-950 tracking-tight">Masuk ke Akun Anda</h1>
-            <p class="text-xs sm:text-sm text-slate-500 mt-1">Platform marketplace jasa kreatif mahasiswa Indonesia</p>
-        </div>
-
-        {{-- Main Login Card --}}
-        <div class="bg-white rounded-3xl border-2 border-slate-900 p-6 sm:p-8 shadow-[4px_4px_0px_0px_#0F2942]">
-
-            @if($errors->any())
-            <div class="mb-5 bg-red-50 border border-red-200 rounded-2xl p-4">
-                <ul class="text-xs text-red-700 space-y-1">
-                    @foreach($errors->all() as $error)
-                        <li class="flex items-center gap-2">
-                            <span class="w-1.5 h-1.5 rounded-full inline-block" style="background:#EB2E33"></span>
-                            {{ $error }}
-                        </li>
-                    @endforeach
-                </ul>
-            </div>
-            @endif
-
-            <form method="POST" action="{{ route('login') }}" class="space-y-4">
-                @csrf
-
-                {{-- Email Input --}}
-                <div>
-                    <label for="email" class="block text-xs font-mono font-bold uppercase tracking-wider text-slate-700 mb-1.5">
-                        Email
-                    </label>
-                    <input type="email" id="email" name="email"
-                           value="{{ old('email') }}"
-                           placeholder="nama@kampus.ac.id atau email@klien.com"
-                           required autocomplete="email" autofocus
-                           class="w-full border-2 border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 outline-none transition-all focus:border-slate-950 bg-white font-medium">
-                </div>
-
-                {{-- Password Input --}}
-                <div>
-                    <div class="flex items-center justify-between mb-1.5">
-                        <label for="password" class="block text-xs font-mono font-bold uppercase tracking-wider text-slate-700">
-                            Password
-                        </label>
-                        <a href="#" class="text-xs font-semibold text-slate-400 hover:text-slate-900">Lupa sandi?</a>
-                    </div>
-                    <div class="relative" x-data="{ show: false }">
-                        <input :type="show ? 'text' : 'password'" id="password" name="password"
-                               placeholder="Minimal 8 karakter"
-                               required autocomplete="current-password"
-                               class="w-full border-2 border-slate-200 rounded-xl px-4 py-2.5 pr-11 text-sm text-slate-900 placeholder-slate-400 outline-none transition-all focus:border-slate-950 bg-white font-medium">
-                        <button type="button" @click="show = !show" class="absolute right-3 top-3 text-slate-400 hover:text-slate-600">
-                            <svg x-show="!show" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-                            <svg x-show="show" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/></svg>
-                        </button>
-                    </div>
-                </div>
-
-                {{-- Remember Me --}}
-                <div class="flex items-center gap-2 pt-1">
-                    <input type="checkbox" id="remember" name="remember"
-                           class="w-4 h-4 rounded border-slate-300 text-brand-blue focus:ring-0 cursor-pointer">
-                    <label for="remember" class="text-xs font-medium text-slate-600 cursor-pointer select-none">
-                        Tetap masuk selama 30 hari
-                    </label>
-                </div>
-
-                {{-- Submit Button --}}
-                <button type="submit"
-                        class="w-full py-3 rounded-xl text-sm font-bold text-white transition-transform active:translate-y-0.5 shadow-sm mt-2"
-                        style="background:#2C99D6">
-                    Masuk Sekarang
-                </button>
-            </form>
-
-            {{-- 1-Click Quick Demo Autofill (Developer & Presentation Friendly) --}}
-            <div class="mt-6 pt-5 border-t border-slate-100" x-data>
-                <p class="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-wider text-center mb-2">
-                    Akun Uji Coba Cepat (1-Klik Isi):
-                </p>
-                <div class="grid grid-cols-3 gap-1.5 text-[11px]">
-                    <button type="button"
-                            @click="document.getElementById('email').value = 'admin@skena.id'; document.getElementById('password').value = 'password123';"
-                            class="px-2 py-1.5 rounded-lg border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold transition-colors text-center">
-                        Admin
-                    </button>
-                    <button type="button"
-                            @click="document.getElementById('email').value = 'earliyanza@student.telkomuniversity.ac.id'; document.getElementById('password').value = 'password123';"
-                            class="px-2 py-1.5 rounded-lg border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold transition-colors text-center">
-                        Freelancer
-                    </button>
-                    <button type="button"
-                            @click="document.getElementById('email').value = 'rizal@kreatifstudio.com'; document.getElementById('password').value = 'password123';"
-                            class="px-2 py-1.5 rounded-lg border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold transition-colors text-center">
-                        Klien
-                    </button>
-                </div>
-            </div>
-
-            {{-- Footer Register Link --}}
-            <div class="mt-6 pt-4 border-t border-slate-100 text-center">
-                <p class="text-xs text-slate-600">
-                    Belum punya akun?
-                    <a href="{{ route('register') }}" class="font-bold underline hover:text-brand-blue" style="color:#2C99D6">
-                        Daftar gratis di sini →
-                    </a>
-                </p>
-            </div>
-        </div>
-
+{{-- Header: wordmark di tengah (DESIGN.md) --}}
+<header class="w-full px-6 lg:px-12">
+    <div class="max-w-6xl mx-auto h-[100px] grid grid-cols-[1fr_auto_1fr] items-center">
+        <a href="{{ route('home') }}" class="justify-self-start inline-flex items-center gap-2 text-label-md text-on-surface-variant hover:text-primary transition-colors">
+            <span class="material-symbols-outlined text-[18px]">arrow_back</span><span class="hidden sm:inline">Beranda</span>
+        </a>
+        <a href="{{ route('home') }}" class="text-[32px] leading-none font-bold tracking-[-0.02em] text-primary" aria-label="SKENA">SKENA</a>
+        <span class="justify-self-end text-label-md text-on-surface-variant hidden sm:block">Skill Exchange Network</span>
     </div>
-</div>
-@endsection
+</header>
+
+<main class="w-full flex-1 flex items-center justify-center px-6 pb-space-xl">
+    <div class="flex flex-col w-full">
+        <div class="w-full max-w-6xl mx-auto my-auto">
+            {{-- Main Split Auth Card --}}
+            <div class="w-full bg-neutral rounded-xl border border-border shadow-card overflow-hidden grid grid-cols-1 lg:grid-cols-12 p-3 lg:p-4 gap-6 relative">
+
+                {{-- Left Column: Gradient Brand Panel --}}
+                <div class="lg:col-span-5 relative overflow-hidden rounded-[24px] bg-gradient-to-br from-hero-start to-primary p-8 lg:p-10 flex flex-col justify-between text-on-primary min-h-[520px] shadow-sm">
+                    {{-- Ambient decorative --}}
+                    <svg class="absolute bottom-0 left-0 right-0 w-full opacity-15 pointer-events-none" preserveAspectRatio="none" viewBox="0 0 500 150">
+                        <path d="M0,40 C150,90 300,10 500,60 L500,150 L0,150 Z" fill="#FFFFFF"></path>
+                    </svg>
+
+                    {{-- Top badge --}}
+                    <div class="relative z-10 flex flex-col gap-6">
+                        <div class="flex items-center justify-between">
+                            <span class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/20 font-label-md text-label-md tracking-wide text-white">
+                                <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
+                                PORTAL MAHASISWA
+                            </span>
+                            <div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
+                                <span class="material-symbols-outlined text-white text-[20px]">school</span>
+                            </div>
+                        </div>
+                        <div class="flex flex-col gap-3 mt-4">
+                            <h1 class="font-display text-display-mobile text-white tracking-tight leading-[1.1]">
+                                Kembali ke<br/>
+                                <span class="text-white/80">Kampus Digitalmu</span>
+                            </h1>
+                            <p class="font-body-md text-body-md text-white/90 leading-relaxed max-w-sm mt-1">
+                                Akses ratusan jasa mikro mahasiswa: Desain PPT, Olah Data Excel, Foto Produk, hingga Tutor Koding.
+                            </p>
+                        </div>
+                    </div>
+
+                    {{-- Stats card --}}
+                    <div class="relative z-10 my-6 bg-white/15 rounded-2xl p-4 flex flex-col gap-3">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-white/30 flex items-center justify-center text-white overflow-hidden shadow-inner">
+                                <span class="material-symbols-outlined text-[22px]">verified</span>
+                            </div>
+                            <div class="flex flex-col min-w-0">
+                                <span class="font-label-lg text-label-lg text-white truncate">Ekosistem Peer-to-Peer</span>
+                                <span class="font-body-sm text-body-sm text-white/80">Khusus Civitas Akademika Aktif</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between pt-2">
+                            <div class="flex items-center gap-2">
+                                <span class="font-headline-sm text-headline-sm text-white font-bold tracking-tight">4.200+</span>
+                                <span class="font-body-sm text-body-sm text-white/80">Proyek Selesai</span>
+                            </div>
+                            <span class="px-2.5 py-1 rounded-full bg-white/25 text-white font-label-sm text-label-sm">Telkom • ITB • UI</span>
+                        </div>
+                    </div>
+
+                    {{-- Feature pills --}}
+                    <div class="relative z-10 flex flex-wrap gap-2 pt-2">
+                        <div class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/20 font-label-md text-label-md text-white">
+                            <span class="material-symbols-outlined text-[16px] text-white">verified_user</span>
+                            100% Mahasiswa Asli
+                        </div>
+                        <div class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/20 font-label-md text-label-md text-white">
+                            <span class="material-symbols-outlined text-[16px] text-white">lock</span>
+                            Escrow & Garansi Uang
+                        </div>
+                        <div class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/20 font-label-md text-label-md text-white">
+                            <span class="material-symbols-outlined text-[16px] text-white">star</span>
+                            Rating Jujur
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Right Column: Login Form --}}
+                <div class="lg:col-span-7 flex flex-col justify-center px-4 py-6 sm:px-8 sm:py-8 lg:px-12 lg:py-10">
+                    {{-- Header --}}
+                    <div class="flex flex-col gap-2 mb-6">
+                        <div class="flex items-center gap-2">
+                            <span class="px-3 py-1 rounded-full bg-surface-container-high text-primary font-label-sm text-label-sm tracking-wide uppercase">
+                                MASUK AKUN
+                            </span>
+                        </div>
+                        <h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">
+                            Masuk ke SKENA
+                        </h2>
+                        <p class="font-body-md text-body-md text-on-surface-variant">
+                            Gunakan email kampus terverifikasimu untuk memulai transaksi aman.
+                        </p>
+                    </div>
+
+                    {{-- Error / Success messages --}}
+                    @if ($errors->any() || session('error'))
+                        <div class="w-full mb-6 p-4 rounded-2xl bg-error-container text-on-error-container flex items-start gap-3" id="error-banner">
+                            <span class="material-symbols-outlined text-error text-[20px] mt-0.5 shrink-0" style="font-variation-settings: 'FILL' 1;">error</span>
+                            <div class="flex-1 flex flex-col">
+                                <p class="font-label-lg text-label-lg font-bold text-on-error-container">Gagal Masuk</p>
+                                @if(session('error'))
+                                    <p class="font-body-sm text-body-sm text-on-error-container/90">{{ session('error') }}</p>
+                                @else
+                                    @foreach($errors->all() as $error)
+                                        <p class="font-body-sm text-body-sm text-on-error-container/90">{{ $error }}</p>
+                                    @endforeach
+                                @endif
+                            </div>
+                            <button class="text-on-error-container/70 hover:text-on-error-container transition-colors" onclick="document.getElementById('error-banner').classList.add('hidden')" type="button">
+                                <span class="material-symbols-outlined text-[18px]">close</span>
+                            </button>
+                        </div>
+                    @endif
+
+                    @if(session('success'))
+                        <div class="w-full mb-6 p-4 rounded-2xl bg-green-50 text-green-800 flex items-start gap-3">
+                            <span class="material-symbols-outlined text-green-600 text-[20px] mt-0.5 shrink-0" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                            <p class="font-body-sm text-body-sm">{{ session('success') }}</p>
+                        </div>
+                    @endif
+
+                    {{-- Demo quick-login buttons --}}
+                    <div class="mb-5 p-3.5 rounded-2xl bg-surface-container-low border border-surface-container-high">
+                        <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">🧪 Demo Akun Cepat</p>
+                        <div class="flex flex-wrap gap-2">
+                            <button type="button" onclick="fillDemo('admin@skena.id','password123')"
+                                class="px-3 py-1.5 rounded-full bg-white border border-surface-container-highest text-on-surface font-label-sm text-label-sm hover:bg-surface-container transition-colors">
+                                Admin
+                            </button>
+                            <button type="button" onclick="fillDemo('earliyanza@student.telkomuniversity.ac.id','password123')"
+                                class="px-3 py-1.5 rounded-full bg-white border border-surface-container-highest text-on-surface font-label-sm text-label-sm hover:bg-surface-container transition-colors">
+                                Freelancer ✓
+                            </button>
+                            <button type="button" onclick="fillDemo('anindya@student.telkomuniversity.ac.id','password123')"
+                                class="px-3 py-1.5 rounded-full bg-white border border-surface-container-highest text-on-surface font-label-sm text-label-sm hover:bg-surface-container transition-colors">
+                                Mahasiswa (Pending)
+                            </button>
+                            <button type="button" onclick="fillDemo('rizal@kreatifstudio.com','password123')"
+                                class="px-3 py-1.5 rounded-full bg-white border border-surface-container-highest text-on-surface font-label-sm text-label-sm hover:bg-surface-container transition-colors">
+                                Client
+                            </button>
+                        </div>
+                    </div>
+
+                    {{-- Divider --}}
+                    <div class="flex items-center gap-4 mb-5">
+                        <div class="flex-1 h-px bg-surface-container-highest"></div>
+                        <span class="font-label-sm text-label-sm text-outline uppercase tracking-wider">atau masuk manual</span>
+                        <div class="flex-1 h-px bg-surface-container-highest"></div>
+                    </div>
+
+                    {{-- Login Form --}}
+                    <form class="flex flex-col gap-5" method="POST" action="{{ route('login') }}">
+                        @csrf
+
+                        {{-- Email --}}
+                        <div class="flex flex-col gap-1.5">
+                            <label class="font-label-md text-label-md text-on-surface flex items-center justify-between">
+                                <span>Email Kampus Resmi</span>
+                                <span class="text-on-surface-variant text-[11px] font-normal font-body-sm">Format: .ac.id atau email terdaftar</span>
+                            </label>
+                            <div class="relative flex items-center">
+                                <span class="material-symbols-outlined absolute left-4 text-outline text-[20px] pointer-events-none">alternate_email</span>
+                                <input class="w-full h-12 pl-11 pr-5 rounded-full bg-surface-container-lowest text-on-surface font-body-md text-body-md placeholder:text-outline focus:outline-none focus:ring-2 focus:ring-primary shadow-sm transition-all @error('email') ring-2 ring-error @enderror"
+                                    id="email"
+                                    name="email"
+                                    placeholder="nama@student.telkomuniversity.ac.id"
+                                    type="email"
+                                    value="{{ old('email') }}"
+                                    autocomplete="email"
+                                    required/>
+                            </div>
+                            @error('email')
+                                <p class="font-body-sm text-body-sm text-error ml-4">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        {{-- Password --}}
+                        <div class="flex flex-col gap-1.5">
+                            <label class="font-label-md text-label-md text-on-surface" for="password-input">
+                                Kata Sandi
+                            </label>
+                            <div class="relative flex items-center">
+                                <span class="material-symbols-outlined absolute left-4 text-outline text-[20px] pointer-events-none">lock</span>
+                                <input class="w-full h-12 pl-11 pr-12 rounded-full bg-surface-container-lowest text-on-surface font-body-md text-body-md placeholder:text-outline focus:outline-none focus:ring-2 focus:ring-primary shadow-sm transition-all @error('password') ring-2 ring-error @enderror"
+                                    id="password-input"
+                                    name="password"
+                                    placeholder="Masukkan kata sandi"
+                                    type="password"
+                                    autocomplete="current-password"
+                                    required/>
+                                <button class="absolute right-4 w-8 h-8 flex items-center justify-center text-outline hover:text-on-surface transition-colors" id="toggle-password" title="Tampilkan / Sembunyikan Kata Sandi" type="button">
+                                    <span class="material-symbols-outlined text-[20px]" id="eye-icon">visibility</span>
+                                </button>
+                            </div>
+                            @error('password')
+                                <p class="font-body-sm text-body-sm text-error ml-4">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        {{-- Remember me + forgot password --}}
+                        <div class="flex items-center justify-between py-1">
+                            <label class="flex items-center gap-2 cursor-pointer select-none">
+                                <input class="w-4 h-4 rounded text-primary focus:ring-primary focus:ring-offset-0 bg-surface-container cursor-pointer accent-primary" name="remember" type="checkbox"/>
+                                <span class="font-body-md text-body-md text-on-surface-variant">Ingat saya</span>
+                            </label>
+                            @if (Route::has('password.request'))
+                                <a class="font-label-md text-label-md text-primary-container hover:text-primary transition-colors underline decoration-transparent hover:decoration-current" href="{{ route('password.request') }}">
+                                    Lupa kata sandi?
+                                </a>
+                            @endif
+                        </div>
+
+                        {{-- Submit --}}
+                        <button class="w-full h-12 px-7 rounded-full bg-primary hover:bg-primary-hover active:scale-[0.99] text-on-primary font-label-lg text-label-lg flex items-center justify-center gap-2.5 shadow-md hover:shadow-lg transition-all duration-200" type="submit">
+                            <span>Masuk ke Akun</span>
+                            <span class="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center">
+                                <span class="material-symbols-outlined text-[16px] text-white">arrow_forward</span>
+                            </span>
+                        </button>
+                    </form>
+
+                    {{-- Register link --}}
+                    <div class="mt-8 pt-6 border-t border-surface-container-highest flex items-center justify-center gap-1.5">
+                        <span class="font-body-md text-body-md text-on-surface-variant">Belum punya akun mahasiswa?</span>
+                        <a class="font-label-lg text-label-lg text-primary-container hover:text-primary transition-colors font-bold flex items-center gap-1" href="{{ route('register') }}">
+                            <span>Daftar Sekarang</span>
+                            <span class="material-symbols-outlined text-[16px]">north_east</span>
+                        </a>
+                    </div>
+
+                    {{-- Domain notice --}}
+                    <div class="mt-6 flex items-center justify-center gap-2 text-on-surface-variant/70 font-body-sm text-body-sm">
+                        <span class="material-symbols-outlined text-[16px] text-primary">verified</span>
+                        <span>Hanya domain @student atau @*.ac.id yang dapat mengakses portal mahasiswa</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer class="w-full py-space-md px-6 text-center">
+    <p class="font-body-sm text-body-sm text-on-surface-variant">© {{ date('Y') }} SKENA — Skill Exchange Network. Khusus Mahasiswa Aktif.</p>
+</footer>
+
+<script>
+    // Toggle password visibility
+    (function() {
+        const toggleBtn = document.getElementById('toggle-password');
+        const pwdInput = document.getElementById('password-input');
+        const eyeIcon = document.getElementById('eye-icon');
+        if (toggleBtn && pwdInput && eyeIcon) {
+            toggleBtn.addEventListener('click', function() {
+                const isPassword = pwdInput.getAttribute('type') === 'password';
+                pwdInput.setAttribute('type', isPassword ? 'text' : 'password');
+                eyeIcon.textContent = isPassword ? 'visibility_off' : 'visibility';
+            });
+        }
+    })();
+
+    // Fill demo credentials
+    function fillDemo(email, password) {
+        document.getElementById('email').value = email;
+        document.getElementById('password-input').value = password;
+    }
+</script>
+</body>
+</html>

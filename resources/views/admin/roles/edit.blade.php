@@ -59,7 +59,7 @@
                                class="w-4 h-4 rounded text-brand-blue border-gray-300 focus:ring-blue-200 mt-0.5 cursor-pointer">
                         <div class="text-xs">
                             <p class="font-bold text-gray-900">{{ $perm->display_name }}</p>
-                            <p class="font-mono text-[11px] text-gray-400">{{ $perm->name }}</p>
+                            <p class="text-[11px] text-gray-400">{{ $perm->name }}</p>
                             @if($perm->description)
                                 <p class="text-[11px] text-gray-500 mt-0.5">{{ $perm->description }}</p>
                             @endif
@@ -72,7 +72,7 @@
             <div class="flex items-center gap-3 pt-4 border-t border-gray-100">
                 <button type="submit"
                         class="px-6 py-2.5 rounded-xl text-sm font-bold text-white transition-all hover:opacity-90"
-                        style="background:#2C99D6">
+                        style="background:#3f749c">
                     Simpan Perubahan
                 </button>
                 <a href="{{ route('admin.roles.index') }}"

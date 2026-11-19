@@ -44,7 +44,7 @@
         </div>
         <button type="submit"
                 class="px-4 py-2 rounded-xl text-sm font-bold text-white transition-all hover:opacity-90"
-                style="background:#2C99D6">
+                style="background:#3f749c">
             Filter
         </button>
         <a href="{{ route('admin.users.index') }}"
@@ -58,7 +58,7 @@
 <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
     <table class="w-full">
         <thead>
-            <tr class="border-b border-gray-100" style="background:#F8FAFC">
+            <tr class="border-b border-gray-100" style="background:#F8F9FB">
                 <th class="text-left text-xs font-black text-gray-500 uppercase tracking-wide px-5 py-3">Pengguna</th>
                 <th class="text-left text-xs font-black text-gray-500 uppercase tracking-wide px-4 py-3">Role</th>
                 <th class="text-left text-xs font-black text-gray-500 uppercase tracking-wide px-4 py-3">Status</th>
@@ -124,12 +124,12 @@
                         <form method="POST" action="{{ route('admin.users.verify', $user->id) }}">
                             @csrf
                             <input type="hidden" name="status" value="verified">
-                            <button type="submit" class="text-xs text-white px-2 py-0.5 rounded font-bold hover:opacity-90" style="background:#2C99D6">✓</button>
+                            <button type="submit" class="text-xs text-white px-2 py-0.5 rounded font-bold hover:opacity-90" style="background:#3f749c">✓</button>
                         </form>
                         <form method="POST" action="{{ route('admin.users.verify', $user->id) }}">
                             @csrf
                             <input type="hidden" name="status" value="rejected">
-                            <button type="submit" class="text-xs font-bold px-2 py-0.5 rounded border hover:bg-red-50" style="color:#EB2E33;border-color:#EB2E33">✕</button>
+                            <button type="submit" class="text-xs font-bold px-2 py-0.5 rounded border hover:bg-red-50" style="color:#EF4444;border-color:#EF4444">✕</button>
                         </form>
                     </div>
                     @endif
@@ -147,7 +147,7 @@
                         </a>
                         <a href="{{ route('admin.users.edit', $user->id) }}"
                            class="text-xs font-semibold transition-colors px-2 py-1 rounded-lg hover:bg-blue-50"
-                           style="color:#2C99D6">
+                           style="color:#3f749c">
                             Edit
                         </a>
                         @if($user->id !== auth()->id())
@@ -156,7 +156,7 @@
                             @csrf @method('DELETE')
                             <button type="submit"
                                     class="text-xs font-semibold px-2 py-1 rounded-lg hover:bg-red-50 transition-colors"
-                                    style="color:#EB2E33">
+                                    style="color:#EF4444">
                                 Hapus
                             </button>
                         </form>

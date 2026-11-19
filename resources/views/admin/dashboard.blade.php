@@ -9,7 +9,7 @@
 <div class="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
     <div class="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
         <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Total User</p>
-        <p class="text-3xl font-black" style="color:#2C99D6">{{ $stats['total_users'] }}</p>
+        <p class="text-3xl font-black" style="color:#3f749c">{{ $stats['total_users'] }}</p>
         <p class="text-xs text-gray-400 mt-1">Terdaftar</p>
     </div>
     <div class="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
@@ -29,10 +29,10 @@
     </div>
     <div class="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm relative overflow-hidden">
         @if($stats['pending_verifications'] > 0)
-        <div class="absolute top-3 right-3 w-2 h-2 rounded-full" style="background:#EB2E33"></div>
+        <div class="absolute top-3 right-3 w-2 h-2 rounded-full" style="background:#EF4444"></div>
         @endif
         <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Antrean KTM</p>
-        <p class="text-3xl font-black" style="color:{{ $stats['pending_verifications'] > 0 ? '#EB2E33' : '#6B7280' }}">{{ $stats['pending_verifications'] }}</p>
+        <p class="text-3xl font-black" style="color:{{ $stats['pending_verifications'] > 0 ? '#EF4444' : '#6B7280' }}">{{ $stats['pending_verifications'] }}</p>
         <p class="text-xs text-gray-400 mt-1">Menunggu review</p>
     </div>
 </div>
@@ -47,7 +47,7 @@
                 <p class="text-xs text-gray-400 mt-0.5">Mahasiswa menunggu persetujuan identitas</p>
             </div>
             @if($stats['pending_verifications'] > 0)
-            <span class="text-xs font-bold text-white px-2.5 py-1 rounded-full" style="background:#EB2E33">
+            <span class="text-xs font-bold text-white px-2.5 py-1 rounded-full" style="background:#EF4444">
                 {{ $stats['pending_verifications'] }} pending
             </span>
             @endif
@@ -68,7 +68,7 @@
                     <input type="hidden" name="notes" value="KTM valid, identitas mahasiswa terverifikasi.">
                     <button type="submit"
                             class="text-xs font-bold text-white px-3 py-1 rounded-lg transition-all hover:opacity-90"
-                            style="background:#2C99D6">
+                            style="background:#3f749c">
                         Setujui
                     </button>
                 </form>
@@ -78,7 +78,7 @@
                     <input type="hidden" name="notes" value="Dokumen KTM tidak valid atau buram, mohon upload ulang.">
                     <button type="submit"
                             class="text-xs font-bold px-3 py-1 rounded-lg border border-red-300 transition-all hover:bg-red-50"
-                            style="color:#EB2E33">
+                            style="color:#EF4444">
                         Tolak
                     </button>
                 </form>
@@ -110,7 +110,7 @@
                 <p class="text-xs text-gray-400 mt-0.5">5 pendaftaran akun terkini</p>
             </div>
             <a href="{{ route('admin.users.index') }}"
-               class="text-xs font-semibold hover:underline" style="color:#2C99D6">Semua Pengguna →</a>
+               class="text-xs font-semibold hover:underline" style="color:#3f749c">Semua Pengguna →</a>
         </div>
 
         @forelse($recentUsers as $user)
@@ -120,7 +120,7 @@
                 <div class="flex items-center gap-2 flex-wrap">
                     <p class="text-sm font-semibold text-gray-900 truncate">{{ $user->name }}</p>
                     @if($user->isVerifiedStudent())
-                        <svg class="w-3.5 h-3.5 shrink-0" style="color:#2C99D6" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                        <svg class="w-3.5 h-3.5 shrink-0" style="color:#3f749c" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
                     @endif
                 </div>
                 <p class="text-xs text-gray-500 truncate">{{ $user->email }}</p>

@@ -65,7 +65,7 @@
             <div class="flex gap-3 pt-2">
                 <button type="submit"
                         class="px-5 py-2.5 rounded-xl text-sm font-bold text-white transition-all hover:opacity-90"
-                        style="background:#2C99D6">
+                        style="background:#3f749c">
                     Simpan Perubahan
                 </button>
                 <a href="{{ route('admin.users.show', $user->id) }}"

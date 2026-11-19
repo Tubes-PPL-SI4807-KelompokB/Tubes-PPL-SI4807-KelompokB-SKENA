@@ -14,7 +14,7 @@
                 <div class="flex items-center gap-2 flex-wrap">
                     <h2 class="text-lg font-black text-gray-900">{{ $user->name }}</h2>
                     @if($user->isVerifiedStudent())
-                        <span class="text-xs font-bold text-white px-2 py-0.5 rounded-full" style="background:#2C99D6">✓ Terverifikasi</span>
+                        <span class="text-xs font-bold text-white px-2 py-0.5 rounded-full" style="background:#3f749c">✓ Terverifikasi</span>
                     @endif
                     <span class="text-xs font-semibold px-2.5 py-0.5 rounded-full {{ $user->status === 'active' ? 'bg-green-100 text-green-700' : ($user->status === 'banned' ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-600') }}">
                         {{ ucfirst($user->status) }}
@@ -25,7 +25,7 @@
             </div>
             <a href="{{ route('admin.users.edit', $user->id) }}"
                class="px-4 py-2 rounded-xl text-sm font-bold text-white transition-all hover:opacity-90"
-               style="background:#2C99D6">
+               style="background:#3f749c">
                 Edit Pengguna
             </a>
         </div>
@@ -83,7 +83,7 @@
             <p class="text-xs font-bold text-gray-400 uppercase tracking-wide mb-2">Dokumen KTM</p>
             <a href="{{ asset('storage/' . $user->ktm_path) }}" target="_blank"
                class="inline-flex items-center gap-2 text-sm font-semibold transition-colors hover:underline"
-               style="color:#2C99D6">
+               style="color:#3f749c">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13l-3 3m0 0l-3-3m3 3V8m0 13a9 9 0 110-18 9 9 0 010 18z"/></svg>
                 Lihat / Unduh Dokumen KTM
             </a>
@@ -98,7 +98,7 @@
                 <input type="hidden" name="status" value="verified">
                 <button type="submit"
                         class="px-5 py-2.5 rounded-xl text-sm font-bold text-white transition-all hover:opacity-90"
-                        style="background:#2C99D6">
+                        style="background:#3f749c">
                     ✓ Setujui Verifikasi
                 </button>
             </form>
@@ -107,7 +107,7 @@
                 <input type="hidden" name="status" value="rejected">
                 <button type="submit"
                         class="px-5 py-2.5 rounded-xl text-sm font-bold border-2 transition-all hover:bg-red-50"
-                        style="color:#EB2E33;border-color:#EB2E33">
+                        style="color:#EF4444;border-color:#EF4444">
                     ✕ Tolak Verifikasi
                 </button>
             </form>
@@ -131,7 +131,7 @@
             @if($user->profile->hourly_rate)
             <div>
                 <p class="text-xs font-bold text-gray-400 uppercase tracking-wide mb-1">Rate per Jam</p>
-                <p class="font-semibold" style="color:#2C99D6">Rp {{ number_format($user->profile->hourly_rate, 0, ',', '.') }}</p>
+                <p class="font-semibold" style="color:#3f749c">Rp {{ number_format($user->profile->hourly_rate, 0, ',', '.') }}</p>
             </div>
             @endif
             @if($user->profile->bio)
