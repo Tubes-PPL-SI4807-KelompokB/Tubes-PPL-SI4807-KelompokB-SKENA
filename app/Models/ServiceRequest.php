@@ -35,8 +35,8 @@ class ServiceRequest extends Model
     }
 
     // Relasi ke jasa yang diminta
-    public function service(): BelongsTo
+    public function service()
     {
-        return $this->belongsTo(Service::class, 'service_id');
+        return $this->belongsTo(Service::class, 'service_id', 'service_id');
     }
 }

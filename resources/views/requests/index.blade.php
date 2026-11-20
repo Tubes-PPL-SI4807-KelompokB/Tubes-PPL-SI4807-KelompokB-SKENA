@@ -69,6 +69,7 @@
         background: #3F749C;
         color: #fff;
         font-weight: 600;
+        cursor: pointer;
     }
 
     .request-search-btn:hover {
@@ -175,6 +176,53 @@
         line-height: 1.5;
     }
 
+    /* Tombol ubah dan batalkan */
+    .request-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-top: auto;
+    }
+
+    .request-actions form {
+        margin: 0;
+    }
+
+    .request-edit-btn,
+    .request-delete-btn {
+        min-height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 999px;
+        font-size: 13px;
+        font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+        transition: .2s;
+    }
+
+    .request-edit-btn {
+        background: #EEF4F9;
+        color: #3F749C;
+    }
+
+    .request-edit-btn:hover {
+        background: #3F749C;
+        color: #fff;
+    }
+
+    .request-delete-btn {
+        width: 100%;
+        border: 1px solid #E2E8F0;
+        background: #fff;
+        color: #B91C1C;
+    }
+
+    .request-delete-btn:hover {
+        background: #FEE2E2;
+    }
+
     .request-empty {
         grid-column: 1 / -1;
         padding: 55px 24px;
@@ -270,6 +318,7 @@
 
         <select name="status" class="request-select">
             <option value="">Semua Status</option>
+
             @foreach($statusLabels as $value => $statusInfo)
                 <option value="{{ $value }}" @selected($status === $value)>
                     {{ $statusInfo['label'] }}
@@ -314,11 +363,9 @@
                 </div>
 
                 <div>
-                    <h3>{{ $item->service?->judul ?? 'Jasa tidak ditemukan' }}</h3>
-
-                    <div class="request-provider">
-                        Request jasa dari {{ $item->service?->provider?->name ?? 'Penyedia jasa' }}
-                    </div>
+                    <h3>
+                        {{ $item->service?->judul ?? 'Jasa tidak ditemukan' }}
+                    </h3>
                 </div>
 
                 <div class="request-detail">
@@ -335,6 +382,33 @@
                     <div class="request-note">
                         <strong>Catatan:</strong>
                         {{ $item->catatan }}
+                    </div>
+                @endif
+
+                {{-- TOMBOL UBAH DAN BATALKAN --}}
+                @if($item->status === 'pending')
+                    <div class="request-actions">
+
+                        <a
+                            href="{{ route('requests.edit', $item->id) }}"
+                            class="request-edit-btn"
+                        >
+                            Ubah
+                        </a>
+
+                        <form
+                            method="POST"
+                            action="{{ route('requests.destroy', $item->id) }}"
+                            onsubmit="return confirm('Apakah kamu yakin ingin membatalkan request ini?')"
+                        >
+                            @csrf
+                            @method('DELETE')
+
+                            <button type="submit" class="request-delete-btn">
+                                Batalkan
+                            </button>
+                        </form>
+
                     </div>
                 @endif
 
