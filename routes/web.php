@@ -73,6 +73,7 @@ Route::middleware('auth')->group(function () {
 // ── Admin ──────────────────────────────────────────────────────────────────
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [DashboardAdminController::class, 'index'])->name('dashboard');       // FR-03
+    Route::post('/users/{id}/verify', [UserController::class, 'verifyStudent'])->name('users.verify');
     Route::resource('users', UserController::class);                                               // FR-05
     Route::resource('roles', RoleController::class);                                               // FR-06
     Route::resource('logs', AdminLogController::class)->only(['index', 'show']);                   // PBI-03

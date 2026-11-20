@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Auth;
 
 /**
  * LoginController – FR-02
- * PIC: Tim
+ * Fondasi Bersama Autentikasi
  */
 class LoginController extends Controller
 {
@@ -19,19 +19,43 @@ class LoginController extends Controller
 
     public function login(Request $request)
     {
-        // TODO: implementasi FR-02 – autentikasi user
         $credentials = $request->validate([
             'email'    => ['required', 'email'],
             'password' => ['required'],
+        ], [
+            'email.required' => 'Email wajib diisi.',
+            'email.email' => 'Format email tidak valid.',
+            'password.required' => 'Password wajib diisi.',
         ]);
 
-        if (Auth::attempt($credentials, $request->boolean('remember'))) {
+        $remember = $request->boolean('remember');
+
+        if (Auth::attempt($credentials, $remember)) {
+            $user = Auth::user();
+
+            // Cek status banned/inactive
+            if ($user->status === 'banned') {
+                Auth::logout();
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+
+                return back()->withErrors([
+                    'email' => 'Akun Anda sedang dibekukan oleh Admin. Hubungi dukungan SKENA.',
+                ])->onlyInput('email');
+            }
+
             $request->session()->regenerate();
-            return redirect()->intended(route('dashboard'));
+
+            // Role-based redirect
+            if ($user->isAdmin()) {
+                return redirect()->intended(route('admin.dashboard'))->with('success', 'Selamat datang kembali, Administrator!');
+            }
+
+            return redirect()->intended(route('dashboard'))->with('success', 'Selamat datang kembali di SKENA, ' . $user->name . '!');
         }
 
         return back()->withErrors([
-            'email' => 'Email atau password tidak cocok.',
+            'email' => 'Email atau password yang Anda masukkan tidak cocok.',
         ])->onlyInput('email');
     }
 
@@ -40,6 +64,7 @@ class LoginController extends Controller
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        return redirect()->route('login');
+
+        return redirect()->route('login')->with('success', 'Anda berhasil keluar dari akun.');
     }
 }
