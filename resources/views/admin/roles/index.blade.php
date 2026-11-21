@@ -1,101 +1,194 @@
 @extends('layouts.admin')
-@section('title', 'Role & Hak Akses — SKENA')
-@section('page-title', 'Manajemen Role & Hak Akses')
-@section('page-subtitle', 'Kelola izin akses pengguna (RBAC: Role-Based Access Control)')
+@section('page-title', 'Role & Hak Akses')
+
+{{--
+    TIM-F Manajemen Role dan Hak Akses (FR-06) — persis Claude Design:
+    tf-1 role + matriks hak akses, tf-2 slide-over tambah/ubah role, tf-3 hapus role & toast.
+--}}
+
+@php
+    $modules = \App\Models\Permission::MODULES;
+    $actions = \App\Models\Permission::ACTIONS;
+    $core    = \App\Http\Controllers\Admin\RoleController::CORE;
+    $granted = $role?->permissions->pluck('id')->all() ?? [];
+    $bag     = $errors->getBag('role');
+    $icons   = ['admin' => 'admin_panel_settings', 'freelancer' => 'storefront', 'client' => 'person_search'];
+    $reopen  = $bag->any() ? ['id' => old('_role_id'), 'display_name' => old('display_name'), 'description' => old('description')]
+             : (request('tambah') ? [] : null);
+    $isCore  = $role && in_array($role->name, $core, true);
+    $total   = count($modules) * count($actions);
+    $saveBtn = 'h-11 px-6 rounded-full bg-primary hover:bg-primary-hover text-white text-[14px] font-semibold whitespace-nowrap';
+@endphp
+
+@section('page-head')
+    @if($role)
+        <div class="flex justify-end"><button type="submit" form="permForm" class="{{ $saveBtn }}" data-loading="Menyimpan…">Simpan Perubahan</button></div>
+    @endif
+    @include('admin._head', [
+        'kicker' => 'ADMINISTRASI',
+        'title'  => 'Manajemen Role dan Hak Akses (FR-06)',
+        'desc'   => 'Pilih role, lalu atur apa saja yang boleh dilihat dan diubah di tiap modul.',
+        'pad'    => 'pt-6 pb-8',
+    ])
+@endsection
 
 @section('content')
+<div x-data="roleAdmin(@js($reopen))" @keydown.escape.window="closeAll()" class="grid grid-cols-1 lg:grid-cols-12 gap-card-gap items-start">
 
-{{-- Info Card --}}
-<div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-    <div>
-        <h2 class="text-sm font-black text-gray-900">Struktur Hak Akses Platform</h2>
-        <p class="text-xs text-gray-500 mt-0.5">Sistem memisahkan peran antara Administrator, Freelancer Mahasiswa, dan Klien.</p>
-    </div>
-    <div class="flex items-center gap-2">
-        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-brand-blue border border-blue-200">
-            <span class="w-1.5 h-1.5 rounded-full" style="background:#3f749c"></span>
-            {{ $roles->count() }} Role Aktif
-        </span>
-        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-gray-50 text-gray-700 border border-gray-200">
-            {{ $permissions->count() }} Permission
-        </span>
-    </div>
-</div>
-
-{{-- Role Cards Grid --}}
-<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-    @foreach($roles as $role)
-    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 flex flex-col justify-between hover:border-blue-200 transition-all">
-        <div>
-            <div class="flex items-start justify-between gap-3 mb-3">
-                <div class="w-10 h-10 rounded-xl flex items-center justify-center"
-                     style="background: {{ $role->name === 'admin' ? 'linear-gradient(135deg,#0F172A,#3f749c)' : ($role->name === 'freelancer' ? 'linear-gradient(135deg,#3f749c,#60A5FA)' : 'linear-gradient(135deg,#EF4444,#F87171)') }}">
-                    @if($role->name === 'admin')
-                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
-                    @elseif($role->name === 'freelancer')
-                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
-                    @else
-                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-                    @endif
-                </div>
-                <span class="text-xs font-bold text-gray-500 bg-gray-100 rounded-full px-2.5 py-0.5">
-                    {{ $role->users->count() }} User
+    {{-- Daftar role --}}
+    <nav class="lg:col-span-4 flex flex-col gap-card-gap" aria-label="Daftar role">
+        @foreach($roles as $r)
+            @php($on = $role && $r->id === $role->id)
+            <a href="{{ route('admin.roles.index', ['role' => $r->id]) }}" @if($on) aria-current="page" @endif
+               class="h-[132px] bg-white rounded-3xl p-6 flex flex-col justify-between shadow-card {{ $on ? 'border-2 border-primary' : 'border border-border hover:border-secondary' }}" style="{{ $on ? 'padding:23px' : '' }}">
+                <span class="flex justify-between items-center w-full gap-3">
+                    <span class="flex gap-3 items-center min-w-0">
+                        <span class="w-[42px] h-[42px] flex-none rounded-full grid place-items-center {{ $on ? 'bg-primary text-white' : 'bg-tint text-primary' }}"><span class="msr" style="font-size:21px">{{ $icons[$r->name] ?? 'badge' }}</span></span>
+                        <span class="text-[18px] leading-[1.28] font-semibold truncate">{{ $r->display_name }}</span>
+                    </span>
+                    @if($on)<span class="text-[12px] font-semibold text-primary">Dipilih</span>@endif
                 </span>
-            </div>
-
-            <h3 class="text-base font-black text-gray-900">{{ $role->display_name }}</h3>
-            <p class="text-xs text-gray-400 mb-2">name: {{ $role->name }}</p>
-            <p class="text-xs text-gray-600 mb-4">{{ $role->description }}</p>
-
-            {{-- Permissions Badges --}}
-            <div class="mb-5">
-                <p class="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-2">Hak Akses ({{ $role->permissions->count() }}):</p>
-                <div class="flex flex-wrap gap-1.5 max-h-36 overflow-y-auto">
-                    @forelse($role->permissions as $perm)
-                        <span class="inline-block text-[11px] font-medium bg-blue-50 text-brand-blue rounded-lg px-2 py-0.5 border border-blue-100">
-                            {{ $perm->display_name }}
-                        </span>
-                    @empty
-                        <span class="text-xs text-gray-400 italic">Belum ada izin khusus</span>
-                    @endforelse
-                </div>
-            </div>
-        </div>
-
-        <div class="pt-4 border-t border-gray-100 flex items-center justify-between">
-            <a href="{{ route('admin.roles.edit', $role->id) }}"
-               class="text-xs font-bold text-brand-blue hover:underline">
-                Ubah Hak Akses →
+                <span class="text-[14px] leading-[1.4] text-on-surface-muted">{{ number_format($r->users_count, 0, ',', '.') }} pengguna</span>
             </a>
-            <span class="text-[11px] text-gray-400">Role Sistem</span>
-        </div>
-    </div>
-    @endforeach
-</div>
-
-{{-- Master Permissions List --}}
-<div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-    <div class="flex items-center justify-between mb-4">
-        <div>
-            <h2 class="text-sm font-black text-gray-900">Daftar Semua Permission</h2>
-            <p class="text-xs text-gray-400 mt-0.5">Seluruh permission yang terdaftar di database platform</p>
-        </div>
-    </div>
-
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-        @foreach($permissions as $perm)
-        <div class="p-3 rounded-xl border border-gray-100 bg-gray-50 flex items-start gap-3">
-            <div class="w-6 h-6 rounded-md flex items-center justify-center shrink-0 mt-0.5" style="background:#3f749c">
-                <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-            </div>
-            <div>
-                <p class="text-xs font-bold text-gray-900">{{ $perm->display_name }}</p>
-                <p class="text-[11px] text-gray-400">{{ $perm->name }}</p>
-                <p class="text-[11px] text-gray-500 mt-0.5">{{ $perm->description }}</p>
-            </div>
-        </div>
         @endforeach
-    </div>
-</div>
+        <button type="button" @click="openForm({})"
+                class="h-14 rounded-3xl border border-dashed border-[#CBD5E1] flex items-center justify-center gap-1.5 text-[14px] font-semibold text-primary hover:bg-tint">
+            <span class="msr">add</span>Tambah Role
+        </button>
+    </nav>
 
+    {{-- Matriks hak akses --}}
+    @if($role)
+    <form id="permForm" method="POST" action="{{ route('admin.roles.update', $role) }}"
+          class="lg:col-span-8 min-w-0 bg-white border border-border rounded-3xl shadow-card overflow-hidden"
+          x-data="{ count: {{ count(array_intersect($granted, $permissions->pluck('id')->all())) }} }"
+          @change="count = $el.querySelectorAll('input[name=\'permissions[]\']:checked').length">
+        @csrf @method('PUT')
+        <div class="flex flex-wrap justify-between items-center gap-4 px-6 py-[22px]">
+            <div class="min-w-0">
+                <div class="flex items-center gap-1.5">
+                    <h2 class="text-[18px] leading-[1.28] font-semibold">Hak Akses: {{ $role->display_name }}</h2>
+                    <button type="button" class="w-8 h-8 rounded-full grid place-items-center text-on-surface-muted hover:text-primary hover:bg-tint" aria-label="Ubah role {{ $role->display_name }}"
+                            @click="openForm(@js(['id' => $role->id, 'display_name' => $role->display_name, 'description' => $role->description, 'core' => $isCore]))"><span class="msr" style="font-size:18px">edit</span></button>
+                </div>
+                <div class="mt-0.5 text-[13px] leading-[1.45] text-on-surface-muted"><span x-text="count">{{ count($granted) }}</span> dari {{ $total }} izin aktif</div>
+            </div>
+            <button type="submit" class="{{ $saveBtn }}" data-loading="Menyimpan…">Simpan Perubahan</button>
+        </div>
+        <div class="overflow-x-auto">
+            <div style="min-width:560px">
+                <div class="grid items-center h-11 px-6 bg-surface border-y border-border text-[11px] leading-[1.2] font-bold tracking-[0.06em] text-on-surface-muted" style="grid-template-columns:2fr repeat(4,1fr)">
+                    <span>MODUL</span>
+                    @foreach($actions as $label)<span class="text-center">{{ mb_strtoupper($label) }}</span>@endforeach
+                </div>
+                @foreach($modules as $mKey => [$mLabel, $mIcon])
+                    <div class="grid items-center px-6 py-3 {{ $loop->first ? '' : 'border-t border-border' }}" style="grid-template-columns:2fr repeat(4,1fr)">
+                        <span class="flex gap-3 items-center text-[14px] font-semibold"><span class="w-[34px] h-[34px] rounded-full bg-tint text-primary grid place-items-center"><span class="msr" style="font-size:18px">{{ $mIcon }}</span></span>{{ $mLabel }}</span>
+                        @foreach($actions as $aKey => $aLabel)
+                            @php($perm = $permissions->get("{$mKey}.{$aKey}"))
+                            <span class="flex justify-center">
+                                @if($perm)
+                                    <label class="sw-check" style="width:44px;height:26px">
+                                        <input type="checkbox" name="permissions[]" value="{{ $perm->id }}" role="switch" aria-label="{{ $aLabel }} {{ $mLabel }}" @checked(in_array($perm->id, $granted))>
+                                        <span class="switch" aria-hidden="true"></span>
+                                    </label>
+                                @endif
+                            </span>
+                        @endforeach
+                    </div>
+                @endforeach
+            </div>
+        </div>
+    </form>
+    @endif
+
+    {{-- tf-2: slide-over tambah/ubah role --}}
+    <div x-show="drawer" x-cloak x-transition.opacity class="fixed inset-0 z-50" style="background:rgba(15,23,42,0.32)" @click="closeAll()"></div>
+    <aside x-show="drawer" x-cloak x-trap.noscroll.inert="drawer" role="dialog" aria-modal="true" aria-labelledby="roleFormTitle"
+           class="fixed top-0 right-0 bottom-0 z-[51] w-full max-w-[480px] bg-white sm:rounded-l-3xl overflow-y-auto" style="box-shadow:0 20px 35px -8px rgba(63,116,156,0.16)"
+           x-transition:enter="transition ease-out duration-200" x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0"
+           x-transition:leave="transition ease-in duration-150" x-transition:leave-start="translate-x-0" x-transition:leave-end="translate-x-full">
+        <form method="POST" :action="form.id ? @js(url('admin/roles')) + '/' + form.id : @js(route('admin.roles.store'))" action="{{ route('admin.roles.store') }}" data-validate
+              class="min-h-full flex flex-col gap-5 px-6 py-8 sm:px-10 sm:py-9">
+            @csrf
+            <input type="hidden" name="_method" :value="form.id ? 'PUT' : 'POST'" value="POST">
+            <input type="hidden" name="_role_id" :value="form.id">
+            <div class="flex justify-between items-start gap-4">
+                <div>
+                    <div class="text-[11px] leading-[1.2] font-bold tracking-[0.06em] text-primary" x-text="form.id ? 'UBAH ROLE' : 'TAMBAH ROLE'">TAMBAH ROLE</div>
+                    <h2 id="roleFormTitle" class="mt-2 text-[24px] leading-[1.25] tracking-[-0.01em] font-bold" x-text="form.id ? form.orig : 'Role Baru'">Role Baru</h2>
+                </div>
+                <button type="button" class="circ" aria-label="Tutup" @click="closeAll()"><span class="msr">close</span></button>
+            </div>
+            <div class="fld">
+                <label for="r_name">Nama Role</label>
+                <input id="r_name" name="display_name" class="inp" x-model="form.display_name" x-ref="first" required maxlength="100"
+                       aria-describedby="r_name_err" aria-invalid="{{ $bag->has('display_name') ? 'true' : 'false' }}" data-msg-required="Masukkan nama role.">
+                <p class="err" id="r_name_err" @unless($bag->has('display_name')) hidden @endunless><span data-err-text>{{ $bag->first('display_name') }}</span></p>
+            </div>
+            <div class="fld">
+                <label for="r_desc">Deskripsi</label>
+                <textarea id="r_desc" name="description" class="inp" rows="5" maxlength="255" x-model="form.description"></textarea>
+                <p class="hint">Hak akses diatur setelah role disimpan.</p>
+            </div>
+            <button type="button" x-show="form.id && !form.core" @click="drawer = false; del = true"
+                    class="self-start text-[14px] font-semibold text-on-error-container hover:underline">Hapus role ini</button>
+            <div class="mt-auto grid grid-cols-2 gap-2.5">
+                <button type="button" class="h-12 rounded-full border border-border bg-white text-on-surface text-[14px] font-bold" @click="closeAll()">Batal</button>
+                <button type="submit" class="h-12 rounded-full bg-primary hover:bg-primary-hover text-white text-[14px] font-bold" data-loading="Menyimpan…">Simpan</button>
+            </div>
+        </form>
+    </aside>
+
+    {{-- tf-3: hapus role --}}
+    @if($role && !$isCore)
+    <div x-show="del" x-cloak class="fixed inset-0 z-[52] grid place-items-center p-4" style="background:rgba(15,23,42,0.32)" @click.self="closeAll()">
+        <div x-trap.noscroll.inert="del" role="alertdialog" aria-modal="true" aria-labelledby="delRoleTitle"
+             class="w-full max-w-[440px] bg-white rounded-3xl p-7 flex flex-col gap-2.5" style="box-shadow:0 20px 35px -8px rgba(63,116,156,0.16)">
+            <span class="w-[52px] h-[52px] rounded-full bg-error-container text-on-error-container grid place-items-center"><span class="msr" style="font-size:26px">delete</span></span>
+            <h3 id="delRoleTitle" class="mt-2.5 text-[20px] leading-[1.3] font-bold">Hapus role {{ $role->display_name }}?</h3>
+            <form method="POST" action="{{ route('admin.roles.destroy', $role) }}" class="flex flex-col gap-2.5" data-validate>
+                @csrf @method('DELETE')
+                @if($role->users_count)
+                    <div class="flex gap-2.5 items-start px-3.5 py-3 rounded-[18px] bg-warning-container text-on-warning-container text-[13px] leading-[1.45] font-semibold">
+                        <span class="msr">warning</span>Masih ada {{ $role->users_count }} pengguna dengan role ini. Pindahkan mereka ke role lain sebelum menghapus.
+                    </div>
+                    <div class="fld mt-1">
+                        <label for="move_to">Pindahkan pengguna ke</label>
+                        <select id="move_to" name="move_to" class="inp" style="height:46px" required data-msg-required="Pilih role tujuan.">
+                            @foreach($roles->where('id', '!=', $role->id) as $r)<option value="{{ $r->id }}">{{ $r->display_name }}</option>@endforeach
+                        </select>
+                    </div>
+                @else
+                    <p class="text-[14px] leading-normal text-on-surface-muted">Role ini belum dipakai pengguna mana pun dan akan dihapus permanen.</p>
+                @endif
+                <div class="grid grid-cols-2 gap-2.5 mt-3.5">
+                    <button type="button" class="h-[46px] rounded-full border border-border bg-white text-on-surface text-[14px] font-bold" @click="closeAll()">Batal</button>
+                    <button type="submit" class="h-[46px] rounded-full bg-error text-white text-[14px] font-bold" data-loading="Menghapus…">Hapus</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    @endif
+</div>
 @endsection
+
+@push('scripts')
+<script>
+    document.addEventListener('alpine:init', () => {
+        Alpine.data('roleAdmin', (reopen) => ({
+            drawer: false,
+            del: false,
+            form: {},
+            init() { if (reopen) this.openForm(reopen); },
+            openForm(r) {
+                r = r || {};
+                this.form = { id: r.id || '', display_name: r.display_name || '', orig: r.display_name || '', description: r.description || '', core: !!r.core };
+                this.drawer = true;
+                this.$nextTick(() => setTimeout(() => this.$refs.first && this.$refs.first.focus(), 60));
+            },
+            closeAll() { this.drawer = false; this.del = false; },
+        }));
+    });
+</script>
+@endpush

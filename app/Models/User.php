@@ -24,6 +24,7 @@ class User extends Authenticatable
         'university',
         'faculty',
         'major',
+        'angkatan',
         'ktm_path',
         'verification_notes',
         'verified_at',
@@ -54,6 +55,11 @@ class User extends Authenticatable
     /**
      * Relasi ke profil pengguna
      */
+    public function experiences()
+    {
+        return $this->hasMany(Experience::class)->latest();
+    }
+
     public function profile()
     {
         return $this->hasOne(Profile::class);
