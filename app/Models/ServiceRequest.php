@@ -28,15 +28,13 @@ class ServiceRequest extends Model
         ];
     }
 
-    // Relasi ke pengguna yang mengajukan request
     public function seeker(): BelongsTo
     {
         return $this->belongsTo(User::class, 'seeker_id');
     }
 
-    // Relasi ke jasa yang diminta
-    public function service()
+    public function service(): BelongsTo
     {
-        return $this->belongsTo(Service::class, 'service_id', 'service_id');
+        return $this->belongsTo(Service::class, 'service_id');
     }
 }
