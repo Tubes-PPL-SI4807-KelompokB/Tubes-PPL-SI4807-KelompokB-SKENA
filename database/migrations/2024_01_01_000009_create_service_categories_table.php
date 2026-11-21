@@ -9,7 +9,8 @@ return new class extends Migration {
     {
         Schema::create('service_categories', function (Blueprint $table) {
             $table->id();
-            // TODO: definisikan kolom tabel 'service_categories' sesuai ERD
+            $table->string('nama_kategori', 100)->unique();
+            $table->text('deskripsi')->nullable();
             $table->timestamps();
         });
     }
