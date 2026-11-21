@@ -9,7 +9,12 @@ return new class extends Migration {
     {
         Schema::create('portfolios', function (Blueprint $table) {
             $table->id();
-            // TODO: definisikan kolom tabel 'portfolios' sesuai ERD
+            $table->foreignId('provider_id')->constrained('users')->cascadeOnDelete();
+            $table->foreignId('service_id')->nullable()->constrained('services')->nullOnDelete();
+            $table->string('judul', 255);
+            $table->text('deskripsi')->nullable();
+            $table->string('berkas_tautan', 500)->nullable();
+            $table->boolean('status_tampil')->default(true);
             $table->timestamps();
         });
     }
