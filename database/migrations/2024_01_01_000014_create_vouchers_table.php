@@ -9,8 +9,17 @@ return new class extends Migration {
     {
         Schema::create('vouchers', function (Blueprint $table) {
             $table->id();
-            // TODO: definisikan kolom tabel 'vouchers' sesuai ERD
+            $table->string('code', 30)->unique();                   
+            $table->enum('type', ['percent', 'nominal']);             
+            $table->unsignedInteger('value');                         
+            $table->date('start_date');
+            $table->date('end_date');
+            $table->unsignedInteger('quota');                        
+            $table->unsignedInteger('used_count')->default(0);      
+            $table->boolean('is_active')->default(true);               
             $table->timestamps();
+
+            $table->index(['start_date', 'end_date']);
         });
     }
 

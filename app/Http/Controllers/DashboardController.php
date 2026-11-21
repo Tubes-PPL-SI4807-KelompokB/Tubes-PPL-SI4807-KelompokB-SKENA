@@ -25,48 +25,57 @@ class DashboardController extends Controller
         }
 
         // Mode awal: penyedia untuk akun freelancer, pencari untuk lainnya.
-        $initialMode = $user->isFreelancer() ? 'provider' : 'seeker';
+        $initialMode = $user->isFreelancer() ? 'penyedia' : 'pencari';
 
-        // Ringkasan per mode (data contoh). Kunci dipakai oleh skena-sheet.js.
+        // Ringkasan per mode — data contoh sesuai Claude Design "Dashboard Page".
         $modes = [
-            'seeker' => [
-                'l1' => 'Pesanan Aktif',     'n1' => '3',          's1' => 'berjalan',     't1' => '2 sedang dikerjakan penyedia',
-                'l2' => 'Total Transaksi',   'n2' => '14',         's2' => '100% tuntas',  't2' => 'Semester ganjil & genap',
-                'l3' => 'Total Pengeluaran', 'n3' => 'Rp850.000',  't3' => 'Dari 14 pesanan selesai',
+            'pencari' => [
+                ['PESANAN AKTIF', 'receipt_long', '3', '2 menunggu konfirmasi penyedia'],
+                ['TOTAL TRANSAKSI', 'swap_horiz', '14', 'Sejak Agu 2026'],
+                ['TOTAL PENGELUARAN', 'account_balance_wallet', 'Rp485.000', 'Bulan ini Rp120.000'],
+                ['RATING RATA-RATA', 'star', '4.9', 'Dari 11 ulasan penyedia'],
             ],
-            'provider' => [
-                'l1' => 'Pesanan Masuk',     'n1' => '5',          's1' => 'baru',          't1' => '2 perlu dikonfirmasi hari ini',
-                'l2' => 'Jasa Selesai',      'n2' => '28',         's2' => '4.9 rata-rata', 't2' => 'Sejak bergabung di SKENA',
-                'l3' => 'Total Penghasilan', 'n3' => 'Rp2.450.000','t3' => 'Dari 28 pesanan selesai',
+            'penyedia' => [
+                ['PESANAN AKTIF', 'receipt_long', '5', '1 pesanan baru hari ini'],
+                ['TOTAL TRANSAKSI', 'swap_horiz', '27', 'Sejak Agu 2026'],
+                ['TOTAL PENDAPATAN', 'account_balance_wallet', 'Rp1.240.000', 'Bulan ini Rp310.000'],
+                ['RATING RATA-RATA', 'star', '4.8', 'Dari 22 ulasan pencari'],
             ],
         ];
-        $summary = $modes[$initialMode];
 
-        $rating = ['value' => '4.9', 'count' => 28];
-
-        // Rekomendasi jasa (data contoh)
-        $recommendations = [
-            ['img' => 'jasa-ppt.jpg',          'badge' => 'BARU',       'hot' => false, 'cat' => 'Desain PPT',    'rating' => '5.0', 'reviews' => 19, 'title' => 'Desain PPT Sidang & Seminar Skripsi Cepat',      'provider' => 'Nadia S. (DKV ITB)',               'priceLabel' => 'Mulai dari', 'price' => 'Rp20.000', 'unit' => null],
-            ['img' => 'jasa-olah-data.jpg',    'badge' => 'POPULER',    'hot' => true,  'cat' => 'Olah Data',     'rating' => '4.9', 'reviews' => 42, 'title' => 'Olah Data Skripsi SPSS & Interpretasi Excel',    'provider' => 'Rian Pratama (Statistika UNPAD)', 'priceLabel' => 'Mulai dari', 'price' => 'Rp50.000', 'unit' => null],
-            ['img' => 'jasa-video.jpg',        'badge' => 'BARU',       'hot' => false, 'cat' => 'Video Editing', 'rating' => '4.8', 'reviews' => 11, 'title' => 'Editing Video Reels / TikTok Tugas Kampus',      'provider' => 'Dimas K. (Ilkom UI)',              'priceLabel' => 'Mulai dari', 'price' => 'Rp35.000', 'unit' => null],
-            ['img' => 'jasa-tutor-koding.jpg', 'badge' => 'TOP SELLER', 'hot' => true,  'cat' => 'Tutor Koding',  'rating' => '5.0', 'reviews' => 34, 'title' => 'Tutor Privat Koding Python & SQL Tugas Kuliah', 'provider' => 'Fathir A. (Informatika)',          'priceLabel' => 'Biaya sesi', 'price' => 'Rp40.000', 'unit' => '/jam'],
-            ['img' => 'jasa-dokumen.jpg',      'badge' => 'BARU',       'hot' => false, 'cat' => 'Dokumen',       'rating' => '4.7', 'reviews' => 8,  'title' => 'Rapikan Format & Daftar Pustaka Skripsi',        'provider' => 'Salsa M. (Sastra UGM)',            'priceLabel' => 'Mulai dari', 'price' => 'Rp25.000', 'unit' => null],
-            ['img' => 'jasa-web.jpg',          'badge' => 'BARU',       'hot' => false, 'cat' => 'Web',           'rating' => '4.9', 'reviews' => 15, 'title' => 'Bikin Landing Page Organisasi Kampus',           'provider' => 'Arga P. (Sistem Informasi)',       'priceLabel' => 'Mulai dari', 'price' => 'Rp75.000', 'unit' => null],
+        // Rekomendasi jasa (data contoh desain)
+        $services = [
+            ['POPULER', 'Desain', '4.9', 'Desain PPT Presentasi Sidang dan Seminar', 'Nadia Salsabila · DKV 2022', 'Rp20.000', 'jasa-ppt.jpg'],
+            ['BARU', 'Tutor', '4.8', 'Tutor SQL dan Basis Data untuk Pemula', 'Dimas Kurniawan · Informatika 2021', 'Rp30.000/jam', 'jasa-tutor-koding.jpg'],
+            ['POPULER', 'Video', '4.9', 'Edit Video Reels dan Dokumentasi Acara', 'Rara Anindya · Ilmu Komunikasi 2022', 'Rp35.000', 'jasa-video.jpg'],
+            ['BARU', 'Web', '4.7', 'Setup Website Portofolio Pribadi', 'Bagas Pratama · Sistem Informasi 2021', 'Rp50.000', 'jasa-web.jpg'],
+            ['POPULER', 'Data', '4.9', 'Olah Data Skripsi SPSS dan Interpretasi Hasil', 'Rian Pratama · Statistika 2021', 'Rp50.000', 'jasa-olah-data.jpg'],
+            ['BARU', 'Dokumen', '4.7', 'Rapikan Format dan Daftar Pustaka Skripsi', 'Salsa Maharani · Sastra Indonesia 2022', 'Rp25.000', 'jasa-dokumen.jpg'],
+            ['POPULER', 'Desain', '4.8', 'Desain Poster dan Feed Instagram Acara Kampus', 'Bella Tanjung · DKV 2023', 'Rp30.000', 'jasa-ppt.jpg'],
+            ['BARU', 'Tutor', '4.9', 'Tutor Python Dasar untuk Tugas Algoritma', 'Fathir Rahman · Sistem Informasi 2023', 'Rp40.000/jam', 'jasa-tutor-koding.jpg'],
+            ['POPULER', 'Video', '4.8', 'Edit Video Dokumentasi KKN dan Organisasi', 'Dimas Kurniawan · Ilmu Komunikasi 2021', 'Rp45.000', 'jasa-video.jpg'],
+            ['BARU', 'Web', '4.6', 'Bikin Landing Page Organisasi Kampus', 'Arga Prasetyo · Informatika 2022', 'Rp75.000', 'jasa-web.jpg'],
+            ['POPULER', 'Data', '4.8', 'Dashboard Excel untuk Laporan Keuangan UKM', 'Nabila Putri · Akuntansi 2022', 'Rp35.000', 'jasa-olah-data.jpg'],
+            ['BARU', 'Dokumen', '4.7', 'Proofreading Abstrak dan Jurnal Bahasa Inggris', 'Kevin Wijaya · Sastra Inggris 2021', 'Rp30.000', 'jasa-dokumen.jpg'],
         ];
 
-        // Aktivitas pesanan (data contoh). status: work | rev | done | wait
-        $orderActivities = [
-            ['icon' => 'i-play',  'tone' => '',       'title' => 'Redesign PPT Presentasi Biokimia',      'who' => 'Penyedia', 'name' => 'Nadia S. (DKV ITB)',      'note' => 'Tenggat: Besok, 18.00 WIB',                 'status' => 'work', 'label' => 'Dikerjakan'],
-            ['icon' => 'i-chart', 'tone' => 'amber',  'title' => 'Olah Data Regresi Logistik SPSS',       'who' => 'Pencari',  'name' => 'Arif W. (Manajemen)',     'note' => 'Catatan: tambahkan uji multikolinearitas', 'status' => 'rev',  'label' => 'Revisi'],
-            ['icon' => 'i-db',    'tone' => 'green',  'title' => 'Setup Database PostgreSQL Tugas Besar', 'who' => 'Penyedia', 'name' => 'Fathir A. (Informatika)', 'note' => 'Selesai 12 Nov 2026',                       'status' => 'done', 'label' => 'Selesai'],
-            ['icon' => 'i-pen',   'tone' => 'indigo', 'title' => 'Pembuatan Infografis PKM 2026',         'who' => 'Penyedia', 'name' => 'Bella T. (Arsitektur)',   'note' => 'Menunggu konfirmasi brief',                 'status' => 'wait', 'label' => 'Menunggu'],
+        // Aktivitas pesanan (data contoh desain)
+        $orders = [
+            ['design_services', 'Desain PPT Sidang Skripsi', 'Nadia S. · Tenggat Besok, 18.00 WIB · Rp20.000', 'Dikerjakan'],
+            ['movie', 'Edit Video Profil UKM Fotografi', 'Rara A. · Tenggat 20 Nov 2026 · Rp35.000', 'Revisi Klien'],
+            ['school', 'Tutor SQL Pertemuan 2', 'Dimas K. · 12 Nov 2026 · Rp30.000', 'Selesai'],
+            ['description', 'Rapikan Format Laporan KP', 'Salma R. · Diajukan 18 Nov 2026 · Rp25.000', 'Menunggu'],
+        ];
+
+        $features = [
+            ['sell', 'Harga Terjangkau', 'Sesuai kantong mahasiswa'],
+            ['receipt', 'Pembayaran Tercatat', 'Setiap transaksi terekam'],
+            ['handshake', 'Negosiasi Harga', 'Sepakati harga bersama'],
+            ['star', 'Ulasan & Rating', 'Pilih dari yang terpercaya'],
         ];
 
         $categories = ['Semua', 'Desain', 'Tutor', 'Video', 'Web', 'Dokumen'];
 
-        return view('dashboard.index', compact(
-            'user', 'initialMode', 'modes', 'summary', 'rating',
-            'recommendations', 'orderActivities', 'categories'
-        ));
+        return view('dashboard.index', compact('user', 'initialMode', 'modes', 'services', 'orders', 'features', 'categories'));
     }
 }
