@@ -34,43 +34,45 @@ class RolePermissionSeeder extends Seeder
             $roleModels[$r['name']] = Role::updateOrCreate(['name' => $r['name']], $r);
         }
 
-        // 2. Buat Permissions
-        $permissions = [
-            ['name' => 'manage_users', 'display_name' => 'Kelola Pengguna', 'description' => 'Melihat, mengubah status, atau menghapus pengguna'],
-            ['name' => 'manage_roles', 'display_name' => 'Kelola Hak Akses', 'description' => 'Mengatur role dan permission pengguna'],
-            ['name' => 'verify_students', 'display_name' => 'Verifikasi Mahasiswa', 'description' => 'Memeriksa dan menyetujui KTM mahasiswa'],
-            ['name' => 'view_admin_logs', 'display_name' => 'Lihat Log Admin', 'description' => 'Melihat jejak aktivitas audit sistem'],
-            ['name' => 'moderate_content', 'display_name' => 'Moderasi Konten', 'description' => 'Meninjau laporan konten atau jasa'],
-            ['name' => 'publish_service', 'display_name' => 'Publikasi Jasa', 'description' => 'Membuat dan menerbitkan penawaran jasa kreatif'],
-            ['name' => 'manage_portfolio', 'display_name' => 'Kelola Portofolio', 'description' => 'Mengunggah hasil karya dan proyek'],
-            ['name' => 'order_service', 'display_name' => 'Pesan Jasa', 'description' => 'Melakukan checkout dan order jasa kreatif'],
-            ['name' => 'make_payment', 'display_name' => 'Melakukan Pembayaran', 'description' => 'Membayar pesanan melalui payment gateway/escrow'],
-            ['name' => 'write_review', 'display_name' => 'Beri Ulasan', 'description' => 'Memberi rating dan ulasan pesanan yang selesai'],
-        ];
-
+        // 2. Buat Permissions: matriks modul x aksi (TIM-F), mis. "jasa.ubah"
         $permissionModels = [];
-        foreach ($permissions as $p) {
-            $permissionModels[$p['name']] = Permission::updateOrCreate(['name' => $p['name']], $p);
+        foreach (Permission::MODULES as $module => [$moduleLabel]) {
+            foreach (Permission::ACTIONS as $action => $actionLabel) {
+                $name = "{$module}.{$action}";
+                $permissionModels[$name] = Permission::updateOrCreate(['name' => $name], [
+                    'display_name' => "{$actionLabel} {$moduleLabel}",
+                    'description'  => "{$actionLabel} data modul {$moduleLabel}",
+                ]);
+            }
         }
 
-        // 3. Kaitkan Permission ke Role
-        // Admin: semua permission
-        $roleModels['admin']->permissions()->sync(collect($permissionModels)->pluck('id'));
+        // Hapus izin lama yang tidak lagi dipakai (format sebelum matriks modul)
+        Permission::whereNotIn('name', array_keys($permissionModels))->delete();
 
-        // Freelancer: publish_service, manage_portfolio, write_review
-        $freelancerPerms = collect([
-            $permissionModels['publish_service']->id,
-            $permissionModels['manage_portfolio']->id,
-            $permissionModels['write_review']->id,
-        ]);
-        $roleModels['freelancer']->permissions()->sync($freelancerPerms);
+        // 3. Kaitkan Permission ke Role. Urutan aksi: lihat, tambah, ubah, hapus.
+        $preset = [
+            'admin' => array_fill_keys(array_keys(Permission::MODULES), [1, 1, 1, 1]),
+            'freelancer' => [ // Penyedia jasa
+                'profil' => [1, 0, 1, 0], 'jasa' => [1, 1, 1, 1], 'kategori' => [1, 0, 0, 0], 'voucher' => [1, 0, 0, 0],
+                'request' => [1, 0, 1, 0], 'pesanan' => [1, 0, 1, 0], 'pembayaran' => [1, 0, 1, 0], 'notifikasi' => [1, 0, 1, 1],
+                'pengguna' => [0, 0, 0, 0],
+            ],
+            'client' => [ // Pencari jasa
+                'profil' => [1, 0, 1, 0], 'jasa' => [1, 0, 0, 0], 'kategori' => [1, 0, 0, 0], 'voucher' => [1, 0, 0, 0],
+                'request' => [1, 1, 1, 1], 'pesanan' => [1, 1, 1, 0], 'pembayaran' => [1, 1, 1, 1], 'notifikasi' => [1, 0, 1, 1],
+                'pengguna' => [0, 0, 0, 0],
+            ],
+        ];
 
-        // Client: order_service, make_payment, write_review
-        $clientPerms = collect([
-            $permissionModels['order_service']->id,
-            $permissionModels['make_payment']->id,
-            $permissionModels['write_review']->id,
-        ]);
-        $roleModels['client']->permissions()->sync($clientPerms);
+        $actions = array_keys(Permission::ACTIONS);
+        foreach ($preset as $role => $modules) {
+            $ids = [];
+            foreach ($modules as $module => $flags) {
+                foreach ($flags as $i => $on) {
+                    if ($on) $ids[] = $permissionModels["{$module}.{$actions[$i]}"]->id;
+                }
+            }
+            $roleModels[$role]->permissions()->sync($ids);
+        }
     }
 }

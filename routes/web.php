@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\VerificationController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ExperienceController;
@@ -40,6 +41,7 @@ use App\Http\Controllers\Admin\VoucherController;
 Route::middleware('guest')->group(function () {
     Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register'); // FR-01
     Route::post('/register', [RegisterController::class, 'register']);
+    Route::get('/register/email-tidak-valid', [VerificationController::class, 'invalidEmail'])->name('register.email-invalid'); // TIM-A ta-3
     Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');                 // FR-02
     Route::post('/login', [LoginController::class, 'login']);
 });
@@ -51,7 +53,12 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 // ── Authenticated ──────────────────────────────────────────────────────────
 Route::middleware('auth')->group(function () {
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');             // FR-04
+    Route::get('/verifikasi', [VerificationController::class, 'notice'])->name('verification.notice');           // TIM-A ta-2
+    Route::post('/verifikasi', [VerificationController::class, 'verify'])->name('verification.verify');
+    Route::post('/verifikasi/kirim-ulang', [VerificationController::class, 'resend'])->middleware('throttle:6,1')->name('verification.resend');
+    Route::get('/verifikasi/berhasil', [VerificationController::class, 'done'])->name('verification.done');      // TIM-A ta-3
+    Route::get('/beranda', [DashboardController::class, 'index'])->name('dashboard');               // FR-04
+    Route::permanentRedirect('/dashboard', '/beranda');                                             // URL lama
     Route::resource('profile', ProfileController::class)->only(['index', 'edit', 'update']);        // PBI-01
     Route::resource('experiences', ExperienceController::class);                                    // PBI-01
     Route::resource('skills', SkillController::class);                                              // PBI-02
@@ -74,6 +81,7 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [DashboardAdminController::class, 'index'])->name('dashboard');       // FR-03
     Route::post('/users/{id}/verify', [UserController::class, 'verifyStudent'])->name('users.verify');
+    Route::patch('/users/{id}/status', [UserController::class, 'toggleStatus'])->name('users.status');   // TIM-E
     Route::resource('users', UserController::class);                                               // FR-05
     Route::resource('roles', RoleController::class);                                               // FR-06
     Route::resource('logs', AdminLogController::class)->only(['index', 'show']);                   // PBI-03

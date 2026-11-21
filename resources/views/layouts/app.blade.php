@@ -7,5 +7,6 @@
 
 @push('styles')
     @include('layouts.partials.design-tokens')
+    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/focus@3.14.1/dist/cdn.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/cdn.min.js"></script>
 @endpush

@@ -9,7 +9,6 @@ use App\Models\Profile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Storage;
 
 /**
  * RegisterController – FR-01
@@ -17,92 +16,68 @@ use Illuminate\Support\Facades\Storage;
  */
 class RegisterController extends Controller
 {
+    /** TIM-A: domain email kampus yang diterima (desain ta-3). */
+    public const CAMPUS_DOMAIN = 'student.telkomuniversity.ac.id';
+
     public function showRegistrationForm(Request $request)
     {
-        $selectedRole = $request->query('role', 'freelancer');
-        return view('auth.register', compact('selectedRole'));
+        // Isian dari layar "Email kampus tidak valid" (Ubah Email) dipakai lagi
+        $draft = $request->session()->get('register_draft', []);
+        return view('auth.register', compact('draft'));
     }
 
     public function register(Request $request)
     {
-        $rules = [
+        $email = strtolower(trim((string) $request->input('email')));
+
+        // ta-3 keadaan gagal: email bukan email kampus
+        if ($email !== '' && filter_var($email, FILTER_VALIDATE_EMAIL) && !str_ends_with($email, '@' . self::CAMPUS_DOMAIN)) {
+            $request->session()->put('register_draft', $request->only('name', 'email', 'nim'));
+            return redirect()->route('register.email-invalid');
+        }
+
+        $validated = $request->validate([
             'name'     => ['required', 'string', 'max:255'],
             'email'    => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
+            'nim'      => ['required', 'string', 'max:50'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
-            'phone'    => ['nullable', 'string', 'max:20'],
-            'role'     => ['required', 'in:freelancer,client'],
-        ];
+            'terms'    => ['accepted'],
+        ], [
+            'name.required'      => 'Masukkan nama lengkap kamu.',
+            'email.required'     => 'Masukkan email kampus kamu.',
+            'email.email'        => 'Tulis email lengkap, misalnya nama@student.telkomuniversity.ac.id.',
+            'email.unique'       => 'Email ini sudah terdaftar. Masuk dengan email tersebut.',
+            'nim.required'       => 'Masukkan NIM sesuai data kampus.',
+            'password.required'  => 'Buat kata sandi untuk akunmu.',
+            'password.min'       => 'Kata sandi minimal 8 karakter.',
+            'password.confirmed' => 'Konfirmasi kata sandi belum sama.',
+            'terms.accepted'     => 'Centang persetujuan Syarat & Ketentuan untuk melanjutkan.',
+        ]);
 
-        // Validasi data mahasiswa jika mendaftar sebagai freelancer
-        if ($request->input('role') === 'freelancer') {
-            $rules['nim']        = ['required', 'string', 'max:50'];
-            $rules['university'] = ['required', 'string', 'max:255'];
-            $rules['faculty']    = ['nullable', 'string', 'max:255'];
-            $rules['major']      = ['nullable', 'string', 'max:255'];
-            $rules['ktm']        = ['nullable', 'file', 'mimes:jpeg,png,jpg,pdf', 'max:4096'];
-        }
+        $request->session()->forget('register_draft');
 
-        $messages = [
-            'name.required' => 'Nama lengkap wajib diisi.',
-            'email.required' => 'Email wajib diisi.',
-            'email.email' => 'Format email tidak valid.',
-            'email.unique' => 'Email ini sudah terdaftar di SKENA.',
-            'password.required' => 'Password wajib diisi.',
-            'password.min' => 'Password minimal harus 8 karakter.',
-            'password.confirmed' => 'Konfirmasi password tidak cocok.',
-            'role.required' => 'Pilih jenis akun yang diinginkan.',
-            'nim.required' => 'NIM / Nomor Mahasiswa wajib diisi untuk Freelancer Mahasiswa.',
-            'university.required' => 'Nama Universitas / Politeknik wajib diisi.',
-            'ktm.mimes' => 'Format KTM harus berupa JPG, PNG, atau PDF.',
-            'ktm.max' => 'Ukuran file KTM maksimal 4MB.',
-        ];
-
-        $validated = $request->validate($rules, $messages);
-
-        // Ambil ID Role dari database
-        $roleModel = Role::where('name', $validated['role'])->first();
-        if (!$roleModel) {
-            $roleModel = Role::create([
-                'name' => $validated['role'],
-                'display_name' => $validated['role'] === 'freelancer' ? 'Freelancer Mahasiswa' : 'Klien / Pemberi Kerja',
-            ]);
-        }
-
-        // Upload file KTM jika disertakan
-        $ktmPath = null;
-        if ($request->hasFile('ktm')) {
-            $ktmPath = $request->file('ktm')->store('ktm', 'public');
-        }
-
-        $verificationStatus = ($validated['role'] === 'freelancer') ? 'pending' : 'unverified';
+        // Satu akun mahasiswa = penyedia sekaligus pencari jasa
+        $roleModel = Role::firstOrCreate(['name' => 'freelancer'], ['display_name' => 'Freelancer Mahasiswa']);
 
         // Buat User Baru
         $user = User::create([
             'role_id'                     => $roleModel->id,
             'name'                        => $validated['name'],
-            'email'                       => $validated['email'],
+            'email'                       => $email,
             'password'                    => Hash::make($validated['password']),
-            'phone'                       => $validated['phone'] ?? null,
             'status'                      => 'active',
-            'student_verification_status' => $verificationStatus,
-            'nim'                         => $validated['nim'] ?? null,
-            'university'                  => $validated['university'] ?? null,
-            'faculty'                     => $validated['faculty'] ?? null,
-            'major'                       => $validated['major'] ?? null,
-            'ktm_path'                    => $ktmPath,
-            'verification_notes'          => ($validated['role'] === 'freelancer') ? 'Dokumen verifikasi mahasiswa baru telah diajukan.' : null,
+            'student_verification_status' => 'unverified',
+            'nim'                         => $validated['nim'],
+            'university'                  => 'Telkom University',
         ]);
 
         // Buat Profil Kosong
-        Profile::create([
-            'user_id'  => $user->id,
-            'headline' => ($validated['role'] === 'freelancer') ? 'Mahasiswa Kreatif di ' . ($user->university ?? 'Indonesia') : 'Pemberi Kerja Kreatif',
-            'city'     => null,
-        ]);
+        Profile::create(['user_id' => $user->id]);
 
-        // Otomatis Login
+        // Masuk, lalu lanjut ke langkah 2: verifikasi email kampus (ta-2)
         Auth::login($user);
+        VerificationController::sendCode($user);
 
-        return redirect()->route('dashboard')->with('success', 'Akun berhasil dibuat! Selamat datang di SKENA.');
+        return redirect()->route('verification.notice');
     }
 }
