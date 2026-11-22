@@ -11,16 +11,29 @@ class NotificationTest extends TestCase
 {
     use RefreshDatabase;
 
+    private int $seq = 0;
+
+    private function makeUser(): User
+    {
+        $this->seq++;
+
+        return User::create([
+            'name'              => "Mahasiswa {$this->seq}",
+            'email'             => "mhs{$this->seq}@student.telkomuniversity.ac.id",
+            'password'          => 'password123',
+            'email_verified_at' => now(),
+        ]);
+    }
+
     /** @test */
     public function user_can_view_notifications(): void
     {
-        $user = User::factory()->create();
+        $user = $this->makeUser();
 
         Notification::create([
             'user_id' => $user->id,
             'title' => 'Pesanan Baru',
             'message' => 'Kamu memiliki pesanan baru.',
-            'is_read' => false,
         ]);
 
         $response = $this->actingAs($user)
@@ -33,14 +46,13 @@ class NotificationTest extends TestCase
     /** @test */
     public function user_cannot_view_other_users_notifications(): void
     {
-        $user1 = User::factory()->create();
-        $user2 = User::factory()->create();
+        $user1 = $this->makeUser();
+        $user2 = $this->makeUser();
 
         Notification::create([
             'user_id' => $user2->id,
             'title' => 'Notifikasi Rahasia',
             'message' => 'Pesan milik user lain.',
-            'is_read' => false,
         ]);
 
         $response = $this->actingAs($user1)
@@ -53,13 +65,12 @@ class NotificationTest extends TestCase
     /** @test */
     public function user_can_mark_notification_as_read(): void
     {
-        $user = User::factory()->create();
+        $user = $this->makeUser();
 
         $notification = Notification::create([
             'user_id' => $user->id,
             'title' => 'Pesanan Baru',
             'message' => 'Kamu memiliki pesanan baru.',
-            'is_read' => false,
         ]);
 
         $response = $this->actingAs($user)
@@ -67,11 +78,9 @@ class NotificationTest extends TestCase
 
         $response->assertRedirect(route('notifications.index'));
 
-        $this->assertDatabaseHas('notifications', [
-            'id' => $notification->id,
-            'user_id' => $user->id,
-            'is_read' => true,
-        ]);
+        $notification->refresh();
+        $this->assertTrue($notification->is_read);
+        $this->assertNotNull($notification->read_at);
     }
 
     /** @test */
