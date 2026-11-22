@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
             SkillSeeder::class,
             ServiceSeeder::class,
             VoucherSeeder::class,
+            PaymentSeeder::class,
         ]);
     }
 }
