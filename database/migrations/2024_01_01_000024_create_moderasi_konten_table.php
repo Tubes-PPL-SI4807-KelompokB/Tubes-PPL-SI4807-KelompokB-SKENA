@@ -1,3 +1,4 @@
+
 <?php
 
 use Illuminate\Database\Migrations\Migration;
@@ -9,8 +10,29 @@ return new class extends Migration {
     {
         Schema::create('moderasi_konten', function (Blueprint $table) {
             $table->id();
-            // TODO: definisikan kolom tabel 'moderasi_konten' sesuai ERD
+
+            $table->foreignId('report_id')
+                ->nullable()
+                ->constrained('reports')
+                ->nullOnDelete();
+
+            $table->foreignId('moderator_id')
+                ->nullable()
+                ->constrained('users')
+                ->nullOnDelete();
+
+            $table->string('content_type', 100);
+            $table->unsignedBigInteger('content_id');
+
+            $table->string('action', 50);
+            $table->text('reason')->nullable();
+            $table->string('status', 30)->default('pending');
+            $table->timestamp('moderated_at')->nullable();
+
             $table->timestamps();
+
+            $table->index(['content_type', 'content_id']);
+            $table->index(['status', 'created_at']);
         });
     }
 

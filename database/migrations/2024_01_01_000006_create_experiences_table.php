@@ -1,3 +1,4 @@
+
 <?php
 
 use Illuminate\Database\Migrations\Migration;
@@ -9,7 +10,6 @@ return new class extends Migration {
     {
         Schema::create('experiences', function (Blueprint $table) {
             $table->id();
-            // TODO: definisikan kolom tabel 'experiences' sesuai ERD
             $table->timestamps();
         });
     }

@@ -9,8 +9,20 @@ return new class extends Migration {
     {
         Schema::create('favorites', function (Blueprint $table) {
             $table->id();
-            // TODO: definisikan kolom tabel 'favorites' sesuai ERD
+
+            $table->foreignId('user_id')
+                ->constrained('users')
+                ->cascadeOnDelete();
+
+            $table->foreignId('service_id')
+                ->constrained('services')
+                ->cascadeOnDelete();
+
+            $table->text('note')->nullable();
+
             $table->timestamps();
+
+            $table->unique(['user_id', 'service_id']);
         });
     }
 

@@ -1,3 +1,4 @@
+
 <?php
 
 use Illuminate\Database\Migrations\Migration;
@@ -9,8 +10,21 @@ return new class extends Migration {
     {
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
-            // TODO: definisikan kolom tabel 'payments' sesuai ERD
+
+            $table->foreignId('order_id')
+                ->constrained('orders')
+                ->cascadeOnDelete();
+
+            $table->string('payment_method', 50);
+            $table->string('payment_reference')->nullable();
+            $table->decimal('amount', 12, 2);
+            $table->string('status', 30)->default('pending');
+            $table->timestamp('paid_at')->nullable();
+            $table->text('proof_path')->nullable();
+
             $table->timestamps();
+
+            $table->index(['order_id', 'status']);
         });
     }
 

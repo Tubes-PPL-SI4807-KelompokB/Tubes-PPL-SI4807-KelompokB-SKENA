@@ -1,3 +1,4 @@
+
 <?php
 
 use Illuminate\Database\Migrations\Migration;
@@ -9,8 +10,20 @@ return new class extends Migration {
     {
         Schema::create('notifications', function (Blueprint $table) {
             $table->id();
-            // TODO: definisikan kolom tabel 'notifications' sesuai ERD
+
+            $table->foreignId('user_id')
+                ->constrained('users')
+                ->cascadeOnDelete();
+
+            $table->string('title', 150);
+            $table->text('message');
+            $table->string('type', 50)->nullable();
+            $table->json('data')->nullable();
+            $table->timestamp('read_at')->nullable();
+
             $table->timestamps();
+
+            $table->index(['user_id', 'read_at']);
         });
     }
 
