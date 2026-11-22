@@ -62,7 +62,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('requests', ServiceRequestController::class);                                   // PBI-10
     Route::resource('orders', OrderController::class);                                              // PBI-11
     Route::resource('orders.negotiations', NegotiationController::class)->shallow();               // PBI-12
-    Route::resource('payments', PaymentController::class)->only(['index', 'show', 'store']);       // PBI-13
+    Route::resource('payments', PaymentController::class)->only(['index', 'create', 'store', 'show', 'update', 'destroy']); // PBI-13
     Route::resource('work-progress', WorkProgressController::class)->only(['index', 'show', 'update']); // PBI-14
     Route::resource('messages', MessageController::class)->only(['index', 'store']);               // PBI-15
     Route::resource('reviews', ReviewController::class)->only(['index', 'store']);                 // PBI-16
