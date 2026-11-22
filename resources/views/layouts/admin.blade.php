@@ -9,25 +9,16 @@
 
 @push('styles')
     @include('layouts.partials.design-tokens')
+    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/focus@3.14.1/dist/cdn.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/cdn.min.js"></script>
 @endpush
 
 @section('drawer-nav')
-    <span class="grp">Utama</span>
-    <a class="{{ request()->routeIs('admin.dashboard') ? 'on' : '' }}" href="{{ route('admin.dashboard') }}"><span><svg class="ic"><use href="#i-grid"/></svg>Dashboard</span></a>
-
-    <span class="grp">Manajemen</span>
-    <a class="{{ request()->routeIs('admin.users.*') ? 'on' : '' }}" href="{{ route('admin.users.index') }}"><span><svg class="ic"><use href="#i-user"/></svg>Pengguna</span></a>
-    <a class="{{ request()->routeIs('admin.roles.*') ? 'on' : '' }}" href="{{ route('admin.roles.index') }}"><span><svg class="ic"><use href="#i-shield"/></svg>Role &amp; Hak Akses</span></a>
-    <a class="{{ request()->routeIs('admin.categories.*') ? 'on' : '' }}" href="{{ route('admin.categories.index') }}"><span><svg class="ic"><use href="#i-folder"/></svg>Kategori Jasa</span></a>
-    <a class="{{ request()->routeIs('admin.vouchers.*') ? 'on' : '' }}" href="{{ route('admin.vouchers.index') }}"><span><svg class="ic"><use href="#i-receipt"/></svg>Voucher</span></a>
-
-    <span class="grp">Moderasi</span>
-    <a class="{{ request()->routeIs('admin.moderasi.*') ? 'on' : '' }}" href="{{ route('admin.moderasi.index') }}"><span><svg class="ic"><use href="#i-verified"/></svg>Moderasi Konten</span></a>
-    <a class="{{ request()->routeIs('admin.logs.*') ? 'on' : '' }}" href="{{ route('admin.logs.index') }}"><span><svg class="ic"><use href="#i-clip"/></svg>Log Aktivitas</span></a>
-
-    <span class="grp">Situs</span>
-    <a href="{{ route('home') }}"><span><svg class="ic"><use href="#i-compass"/></svg>Lihat Situs</span></a>
+    <a class="{{ request()->routeIs('admin.dashboard') ? 'on' : '' }}" href="{{ route('admin.dashboard') }}" @if(request()->routeIs('admin.dashboard')) aria-current="page" @endif><span class="msr">space_dashboard</span>Dashboard Admin</a>
+    <a class="{{ request()->routeIs('admin.users.*') ? 'on' : '' }}" href="{{ route('admin.users.index') }}" @if(request()->routeIs('admin.users.*')) aria-current="page" @endif><span class="msr">group</span>Pengguna</a>
+    <a class="{{ request()->routeIs('admin.roles.*') ? 'on' : '' }}" href="{{ route('admin.roles.index') }}" @if(request()->routeIs('admin.roles.*')) aria-current="page" @endif><span class="msr">admin_panel_settings</span>Role &amp; Hak Akses</a>
+    <a class="{{ request()->routeIs('admin.categories.*') ? 'on' : '' }}" href="{{ route('admin.categories.index') }}" @if(request()->routeIs('admin.categories.*')) aria-current="page" @endif><span class="msr">category</span>Kategori Jasa</a>
+    <a class="{{ request()->routeIs('admin.vouchers.*') ? 'on' : '' }}" href="{{ route('admin.vouchers.index') }}" @if(request()->routeIs('admin.vouchers.*')) aria-current="page" @endif><span class="msr">confirmation_number</span>Voucher/Promo</a>
 @endsection
 
 @section('page-head')

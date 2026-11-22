@@ -17,6 +17,17 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        //
+        // TIM-B tb-2: token CSRF kedaluwarsa (halaman dibiarkan terlalu lama).
+        // Tamu diarahkan ke login dengan pesan "sesi berakhir"; pengguna yang masih
+        // masuk dikembalikan ke halaman sebelumnya agar bisa mengulang.
+        $exceptions->render(function (\Symfony\Component\HttpKernel\Exception\HttpException $e, $request) {
+            if ($e->getStatusCode() !== 419 || $request->expectsJson()) {
+                return null;
+            }
+            if ($request->user()) {
+                return back()->with('error', 'Halaman sudah terlalu lama dibuka. Silakan ulangi aksimu.');
+            }
+            return redirect()->route('login')->with('session_expired', true);
+        });
     })->create();
 

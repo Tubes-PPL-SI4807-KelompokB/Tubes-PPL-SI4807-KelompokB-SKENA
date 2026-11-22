@@ -33,14 +33,14 @@ class LoginController extends Controller
         if (Auth::attempt($credentials, $remember)) {
             $user = Auth::user();
 
-            // Cek status banned/inactive
-            if ($user->status === 'banned') {
+            // Cek status banned/inactive (TIM-E: akun nonaktif tidak bisa masuk)
+            if ($user->status !== 'active') {
                 Auth::logout();
                 $request->session()->invalidate();
                 $request->session()->regenerateToken();
 
                 return back()->withErrors([
-                    'email' => 'Akun Anda sedang dibekukan oleh Admin. Hubungi dukungan SKENA.',
+                    'email' => 'Akun kamu sedang dinonaktifkan oleh admin. Hubungi dukungan SKENA untuk mengaktifkannya kembali.',
                 ])->onlyInput('email');
             }
 
@@ -55,7 +55,7 @@ class LoginController extends Controller
         }
 
         return back()->withErrors([
-            'email' => 'Email atau password yang Anda masukkan tidak cocok.',
+            'email' => 'Email atau kata sandi belum cocok.',
         ])->onlyInput('email');
     }
 

@@ -23,6 +23,11 @@ class Profile extends Model
         'linkedin',
         'github',
         'hourly_rate',
+        'is_available',
+    ];
+
+    protected $casts = [
+        'is_available' => 'boolean',
     ];
 
     public function user()

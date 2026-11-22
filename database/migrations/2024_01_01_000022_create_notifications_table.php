@@ -1,3 +1,4 @@
+```php
 <?php
 
 use Illuminate\Database\Migrations\Migration;
@@ -12,13 +13,18 @@ return new class extends Migration {
 
             $table->foreignId('user_id')
                 ->constrained('users')
-                ->onDelete('cascade');
+                ->cascadeOnDelete();
 
-            $table->string('title');
+            $table->string('title', 150);
             $table->text('message');
+            $table->string('type', 50)->nullable();
+            $table->json('data')->nullable();
             $table->boolean('is_read')->default(false);
+            $table->timestamp('read_at')->nullable();
 
             $table->timestamps();
+
+            $table->index(['user_id', 'read_at']);
         });
     }
 
@@ -27,3 +33,4 @@ return new class extends Migration {
         Schema::dropIfExists('notifications');
     }
 };
+```

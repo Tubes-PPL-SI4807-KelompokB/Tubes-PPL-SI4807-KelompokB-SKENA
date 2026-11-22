@@ -9,8 +9,18 @@ return new class extends Migration {
     {
         Schema::create('saved_searches', function (Blueprint $table) {
             $table->id();
-            // TODO: definisikan kolom tabel 'saved_searches' sesuai ERD
+
+            $table->foreignId('user_id')
+                ->constrained('users')
+                ->cascadeOnDelete();
+
+            $table->string('name', 150);
+            $table->string('keyword', 255)->nullable();
+            $table->json('filters')->nullable();
+
             $table->timestamps();
+
+            $table->index('user_id');
         });
     }
 

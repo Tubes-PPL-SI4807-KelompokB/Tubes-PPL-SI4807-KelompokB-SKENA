@@ -1,3 +1,4 @@
+
 <?php
 
 use Illuminate\Database\Migrations\Migration;
@@ -9,8 +10,24 @@ return new class extends Migration {
     {
         Schema::create('work_progress', function (Blueprint $table) {
             $table->id();
-            // TODO: definisikan kolom tabel 'work_progress' sesuai ERD
+
+            $table->foreignId('order_id')
+                ->constrained('orders')
+                ->cascadeOnDelete();
+
+            $table->foreignId('updated_by')
+                ->constrained('users')
+                ->restrictOnDelete();
+
+            $table->string('title', 150);
+            $table->text('description')->nullable();
+            $table->string('status', 30)->default('pending');
+            $table->string('attachment_path')->nullable();
+            $table->timestamp('completed_at')->nullable();
+
             $table->timestamps();
+
+            $table->index(['order_id', 'status']);
         });
     }
 
