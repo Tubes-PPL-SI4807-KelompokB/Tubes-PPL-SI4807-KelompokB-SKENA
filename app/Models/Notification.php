@@ -12,8 +12,18 @@ class Notification extends Model
     protected $table = 'notifications';
 
     protected $fillable = [
-        // TODO: definisikan kolom yang dapat diisi
+        'user_id',
+        'title',
+        'message',
+        'is_read',
     ];
 
-    // TODO: tambahkan relasi Eloquent sesuai ERD
+    protected $casts = [
+        'is_read' => 'boolean',
+    ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

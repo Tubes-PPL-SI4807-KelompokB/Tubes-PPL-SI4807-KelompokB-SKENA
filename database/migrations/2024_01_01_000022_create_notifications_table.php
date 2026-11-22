@@ -1,4 +1,4 @@
-
+```php
 <?php
 
 use Illuminate\Database\Migrations\Migration;
@@ -19,6 +19,7 @@ return new class extends Migration {
             $table->text('message');
             $table->string('type', 50)->nullable();
             $table->json('data')->nullable();
+            $table->boolean('is_read')->default(false);
             $table->timestamp('read_at')->nullable();
 
             $table->timestamps();
@@ -32,3 +33,4 @@ return new class extends Migration {
         Schema::dropIfExists('notifications');
     }
 };
+```
