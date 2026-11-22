@@ -9,8 +9,25 @@ return new class extends Migration {
     {
         Schema::create('services', function (Blueprint $table) {
             $table->id();
-            // TODO: definisikan kolom tabel 'services' sesuai ERD
+
+            $table->foreignId('provider_id')
+                ->constrained('users')
+                ->restrictOnDelete();
+
+            $table->foreignId('category_id')
+                ->constrained('service_categories')
+                ->restrictOnDelete();
+
+            $table->string('judul', 150);
+            $table->text('deskripsi');
+            $table->decimal('harga', 12, 2);
+            $table->string('durasi', 100);
+            $table->enum('status', ['aktif', 'nonaktif'])->default('aktif');
+
             $table->timestamps();
+
+            $table->index(['provider_id', 'status']);
+            $table->index(['category_id', 'status']);
         });
     }
 

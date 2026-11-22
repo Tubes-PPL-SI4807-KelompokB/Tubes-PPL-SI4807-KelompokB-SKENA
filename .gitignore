@@ -37,3 +37,6 @@ yarn-error.log
 *.sln
 *.sw?
 .DS_Store
+# Vite build
+/public/build/
+/public/hot

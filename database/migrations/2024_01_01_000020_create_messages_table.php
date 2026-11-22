@@ -1,3 +1,4 @@
+
 <?php
 
 use Illuminate\Database\Migrations\Migration;
@@ -9,8 +10,22 @@ return new class extends Migration {
     {
         Schema::create('messages', function (Blueprint $table) {
             $table->id();
-            // TODO: definisikan kolom tabel 'messages' sesuai ERD
+
+            $table->foreignId('order_id')
+                ->constrained('orders')
+                ->cascadeOnDelete();
+
+            $table->foreignId('sender_id')
+                ->constrained('users')
+                ->restrictOnDelete();
+
+            $table->text('message');
+            $table->string('attachment_path')->nullable();
+            $table->timestamp('read_at')->nullable();
+
             $table->timestamps();
+
+            $table->index(['order_id', 'created_at']);
         });
     }
 

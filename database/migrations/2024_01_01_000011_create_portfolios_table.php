@@ -9,8 +9,21 @@ return new class extends Migration {
     {
         Schema::create('portfolios', function (Blueprint $table) {
             $table->id();
-            // TODO: definisikan kolom tabel 'portfolios' sesuai ERD
+
+            $table->foreignId('service_id')
+                ->constrained('services')
+                ->cascadeOnDelete();
+
+            $table->string('title', 150);
+            $table->text('description')->nullable();
+            $table->string('file_path')->nullable();
+            $table->string('external_url', 2048)->nullable();
+            $table->enum('status', ['tampil', 'disembunyikan'])
+                ->default('tampil');
+
             $table->timestamps();
+
+            $table->index(['service_id', 'status']);
         });
     }
 
