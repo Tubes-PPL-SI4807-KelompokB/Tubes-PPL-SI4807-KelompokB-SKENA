@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Service;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 /**
  * DashboardController – FR-04
@@ -43,21 +45,31 @@ class DashboardController extends Controller
             ],
         ];
 
-        // Rekomendasi jasa (data contoh desain)
-        $services = [
-            ['POPULER', 'Desain', '4.9', 'Desain PPT Presentasi Sidang dan Seminar', 'Nadia Salsabila · DKV 2022', 'Rp20.000', 'jasa-ppt.jpg'],
-            ['BARU', 'Tutor', '4.8', 'Tutor SQL dan Basis Data untuk Pemula', 'Dimas Kurniawan · Informatika 2021', 'Rp30.000/jam', 'jasa-tutor-koding.jpg'],
-            ['POPULER', 'Video', '4.9', 'Edit Video Reels dan Dokumentasi Acara', 'Rara Anindya · Ilmu Komunikasi 2022', 'Rp35.000', 'jasa-video.jpg'],
-            ['BARU', 'Web', '4.7', 'Setup Website Portofolio Pribadi', 'Bagas Pratama · Sistem Informasi 2021', 'Rp50.000', 'jasa-web.jpg'],
-            ['POPULER', 'Data', '4.9', 'Olah Data Skripsi SPSS dan Interpretasi Hasil', 'Rian Pratama · Statistika 2021', 'Rp50.000', 'jasa-olah-data.jpg'],
-            ['BARU', 'Dokumen', '4.7', 'Rapikan Format dan Daftar Pustaka Skripsi', 'Salsa Maharani · Sastra Indonesia 2022', 'Rp25.000', 'jasa-dokumen.jpg'],
-            ['POPULER', 'Desain', '4.8', 'Desain Poster dan Feed Instagram Acara Kampus', 'Bella Tanjung · DKV 2023', 'Rp30.000', 'jasa-ppt.jpg'],
-            ['BARU', 'Tutor', '4.9', 'Tutor Python Dasar untuk Tugas Algoritma', 'Fathir Rahman · Sistem Informasi 2023', 'Rp40.000/jam', 'jasa-tutor-koding.jpg'],
-            ['POPULER', 'Video', '4.8', 'Edit Video Dokumentasi KKN dan Organisasi', 'Dimas Kurniawan · Ilmu Komunikasi 2021', 'Rp45.000', 'jasa-video.jpg'],
-            ['BARU', 'Web', '4.6', 'Bikin Landing Page Organisasi Kampus', 'Arga Prasetyo · Informatika 2022', 'Rp75.000', 'jasa-web.jpg'],
-            ['POPULER', 'Data', '4.8', 'Dashboard Excel untuk Laporan Keuangan UKM', 'Nabila Putri · Akuntansi 2022', 'Rp35.000', 'jasa-olah-data.jpg'],
-            ['BARU', 'Dokumen', '4.7', 'Proofreading Abstrak dan Jurnal Bahasa Inggris', 'Kevin Wijaya · Sastra Inggris 2021', 'Rp30.000', 'jasa-dokumen.jpg'],
-        ];
+        // Rekomendasi jasa: 8 jasa aktif terbaru dari tabel services (PBI-04)
+        $images = ['desain' => 'jasa-ppt.jpg', 'tutor' => 'jasa-tutor-koding.jpg', 'video' => 'jasa-video.jpg',
+                   'web' => 'jasa-web.jpg', 'data' => 'jasa-olah-data.jpg', 'office' => 'jasa-olah-data.jpg', 'foto' => 'jasa-ppt.jpg'];
+        $services = Service::active()
+            ->with(['provider:id,name', 'category:id,nama_kategori'])
+            ->when($user, fn ($q) => $q->where('provider_id', '!=', $user->id))
+            ->latest()
+            ->take(8)
+            ->get()
+            ->map(function (Service $s) use ($images) {
+                $catName = $s->category?->nama_kategori ?? 'Lainnya';
+                $img = collect($images)->first(fn ($file, $key) => Str::contains(Str::lower($catName), $key), 'jasa-ppt.jpg');
+
+                return [
+                    $s->created_at?->gt(now()->subDays(14)) ? 'BARU' : 'JASA',
+                    Str::before($catName, ' &'),
+                    null, // rating diisi setelah PBI-16 Review tersedia
+                    $s->judul,
+                    $s->provider?->name ?? 'Penyedia SKENA',
+                    $s->formatted_harga,
+                    $img,
+                    route('requests.create', ['service_id' => $s->id]),
+                ];
+            })
+            ->all();
 
         // Aktivitas pesanan (data contoh desain)
         $orders = [

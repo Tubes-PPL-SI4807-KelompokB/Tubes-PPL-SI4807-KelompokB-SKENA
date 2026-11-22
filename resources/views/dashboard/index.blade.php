@@ -113,7 +113,7 @@
     </div>
     {{-- Grid ke bawah: 4 kolom x 3 baris di desktop (12 jasa), menyusut ke 3/2/1 kolom --}}
     <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-card-gap">
-        @foreach($services as $i => [$badge, $cat, $rating, $title, $by, $price, $img])
+        @forelse($services as $i => [$badge, $cat, $rating, $title, $by, $price, $img, $orderUrl])
             <article class="bg-white border border-border rounded-3xl p-3 shadow-card transition-[transform,box-shadow] duration-200 ease-out hover:-translate-y-[3px] hover:shadow-card-hover">
                 <div class="relative h-[190px] rounded-[18px] overflow-hidden bg-tint">
                     <img src="{{ asset('images/dashboard/' . $img) }}" alt="" loading="lazy" class="w-full h-full object-cover">
@@ -125,17 +125,26 @@
                 <div class="px-1.5 pt-3.5 pb-1">
                     <div class="flex justify-between items-center">
                         <span class="h-6 px-2.5 rounded-full bg-tint text-[#346284] text-[13px] leading-6">{{ $cat }}</span>
-                        <span class="flex items-center gap-[3px] text-[13px] font-semibold"><span class="msr text-warning" style="font-size:16px">star</span>{{ $rating }}</span>
+                        @if($rating)
+                            <span class="flex items-center gap-[3px] text-[13px] font-semibold"><span class="msr text-warning" style="font-size:16px">star</span>{{ $rating }}</span>
+                        @else
+                            <span class="text-[13px] text-on-surface-muted">Belum ada ulasan</span>
+                        @endif
                     </div>
                     <h3 class="mt-3 h-11 overflow-hidden text-[17px] leading-[1.3] font-semibold">{{ $title }}</h3>
                     <div class="mt-1.5 text-[13px] leading-[1.4] text-on-surface-muted">{{ $by }}</div>
                     <div class="mt-4 flex justify-between items-center">
                         <span class="text-[18px] leading-none font-bold">{{ $price }}</span>
-                        <a href="{{ route('requests.create') }}" class="h-10 px-[18px] rounded-full bg-tint text-primary text-[14px] leading-10 font-semibold hover:bg-primary hover:text-white transition-colors">Pesan</a>
+                        <a href="{{ $orderUrl }}" aria-label="Pesan {{ $title }}" class="h-10 px-[18px] rounded-full bg-tint text-primary text-[14px] leading-10 font-semibold hover:bg-primary hover:text-white transition-colors">Pesan</a>
                     </div>
                 </div>
             </article>
-        @endforeach
+        @empty
+            <div class="col-span-full bg-white border border-border rounded-3xl p-8 text-center">
+                <div class="text-[16px] font-semibold">Belum ada jasa yang tersedia</div>
+                <p class="mt-1 text-[14px] text-on-surface-muted">Jasa dari mahasiswa lain akan tampil di sini. Kamu juga bisa menawarkan jasamu sendiri.</p>
+            </div>
+        @endforelse
     </div>
 
     {{-- Status terkini --}}

@@ -5,7 +5,6 @@
 @section('content')
 @php
     $authUser = auth()->user();
-    $orderUrl = $authUser ? '#' : route('login');
     $link = fn (array $over = []) => route('home', array_filter(array_merge(
         ['q' => $q ?: null, 'kategori' => $cat, 'urut' => $sort !== 'terbaru' ? $sort : null], $over
     )));
@@ -80,17 +79,27 @@
                     </div>
                     <div class="meta">
                         <span class="cat">{{ $s['cat'] }}</span>
-                        <span class="rate"><svg class="ic xs fill"><use href="#i-star"/></svg>{{ $s['rating'] }} <span>({{ $s['reviews'] }})</span></span>
+                        @if($s['rating'])
+                            <span class="rate"><svg class="ic xs fill"><use href="#i-star"/></svg>{{ $s['rating'] }} <span>({{ $s['reviews'] }})</span></span>
+                        @else
+                            <span class="rate"><span>Belum ada ulasan</span></span>
+                        @endif
                     </div>
                     <h3>{{ $s['title'] }}</h3>
                     <div class="prov"><i>{{ mb_substr($s['provider'], 0, 1) }}</i>{{ $s['provider'] }}</div>
                     <div class="buy">
                         <div><small>{{ $s['priceLabel'] }}</small><b>{{ $s['price'] }}@if($s['unit'])<em>{{ $s['unit'] }}</em>@endif</b></div>
-                        <a class="btn-tint" href="{{ $orderUrl }}">Pesan <svg class="ic xs"><use href="#i-right"/></svg></a>
+                        @if($authUser && $authUser->id === $s['providerId'])
+                            <span class="btn-tint" aria-disabled="true" title="Ini jasa milikmu">Jasa Kamu</span>
+                        @else
+                            {{-- Tamu diarahkan ke login lalu kembali ke form request --}}
+                            <a class="btn-tint" href="{{ $s['orderUrl'] }}" aria-label="Pesan {{ $s['title'] }}">Pesan <svg class="ic xs"><use href="#i-right"/></svg></a>
+                        @endif
                     </div>
                 </article>
             @endforeach
         </div>
+        <div class="mt-8">{{ $services->links() }}</div>
     @endif
 </section>
 

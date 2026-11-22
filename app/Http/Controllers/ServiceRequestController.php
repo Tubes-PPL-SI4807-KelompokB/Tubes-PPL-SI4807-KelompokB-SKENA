@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Service;
 use App\Models\ServiceRequest;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class ServiceRequestController extends Controller
 {
@@ -61,24 +61,19 @@ class ServiceRequestController extends Controller
                 ->with('error', 'Silakan pilih jasa terlebih dahulu.');
         }
 
-        // Mengambil informasi jasa dan penyedianya.
-        // Mengikuti rancangan migration terbaru.
-        $service = DB::table('services')
-            ->leftJoin('users as providers', 'providers.user_id', '=', 'services.provider_id')
-            ->where('services.service_id', $serviceId)
-            ->where('services.status', 'aktif')
-            ->select(
-                'services.service_id',
-                'services.judul',
-                'services.deskripsi',
-                'services.harga',
-                'services.durasi',
-                'providers.nama as provider_name'
-            )
-            ->first();
+        // Mengambil informasi jasa beserta penyedianya (kolom sesuai migration: services.id, users.name).
+        $service = Service::with('provider:id,name')
+            ->active()
+            ->find($serviceId);
 
         if (!$service) {
             abort(404, 'Jasa tidak ditemukan atau sudah tidak aktif.');
+        }
+
+        if ($service->provider_id === auth()->id()) {
+            return redirect()
+                ->route('home')
+                ->with('error', 'Kamu tidak bisa mengajukan request untuk jasamu sendiri.');
         }
 
         return view('requests.create', compact('service'));
@@ -90,7 +85,7 @@ class ServiceRequestController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'service_id' => ['required', 'integer', 'exists:services,service_id'],
+            'service_id' => ['required', 'integer', 'exists:services,id'],
             'kebutuhan' => ['required', 'string', 'max:5000'],
             'tanggal' => ['required', 'date', 'after_or_equal:today'],
             'catatan' => ['nullable', 'string', 'max:2000'],
@@ -102,15 +97,18 @@ class ServiceRequestController extends Controller
         ]);
 
         // Pastikan jasa masih aktif sebelum request disimpan.
-        $serviceIsActive = DB::table('services')
-            ->where('service_id', $validated['service_id'])
-            ->where('status', 'aktif')
-            ->exists();
+        $service = Service::active()->find($validated['service_id']);
 
-        if (!$serviceIsActive) {
+        if (!$service) {
             return back()
                 ->withInput()
-                ->with('error', 'Jasa sudah tidak tersedia.');
+                ->with('error', 'Jasa sudah tidak tersedia. Silakan pilih jasa lain di halaman Jelajahi Jasa.');
+        }
+
+        if ($service->provider_id === auth()->id()) {
+            return back()
+                ->withInput()
+                ->with('error', 'Kamu tidak bisa mengajukan request untuk jasamu sendiri.');
         }
 
         ServiceRequest::create([

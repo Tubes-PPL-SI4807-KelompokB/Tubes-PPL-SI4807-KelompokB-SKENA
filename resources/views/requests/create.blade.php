@@ -304,7 +304,7 @@
                 <h2>{{ $service->judul }}</h2>
 
                 <p>
-                    {{ $service->provider_name ?? 'Penyedia jasa SKENA' }}
+                    {{ $service->provider?->name ?? 'Penyedia jasa SKENA' }}
                 </p>
 
                 @if($service->deskripsi)
@@ -335,7 +335,7 @@
             <input
                 type="hidden"
                 name="service_id"
-                value="{{ $service->service_id }}"
+                value="{{ $service->id }}"
             >
 
             {{-- KEBUTUHAN --}}
