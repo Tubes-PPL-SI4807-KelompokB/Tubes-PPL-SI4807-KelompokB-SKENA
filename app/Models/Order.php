@@ -11,9 +11,25 @@ class Order extends Model
 
     protected $table = 'orders';
 
-    protected $fillable = [
-        // TODO: definisikan kolom yang dapat diisi
-    ];
+    protected $guarded = [];
 
-    // TODO: tambahkan relasi Eloquent sesuai ERD
+    public function service()
+    {
+        return $this->belongsTo(Service::class, 'service_id');
+    }
+
+    public function buyer()
+    {
+        return $this->belongsTo(User::class, 'seeker_id');
+    }
+
+    public function payment()
+    {
+        return $this->hasOne(Payment::class, 'order_id');
+    }
+
+    public function voucher()
+    {
+        return $this->belongsTo(Voucher::class, 'voucher_id');
+    }
 }
