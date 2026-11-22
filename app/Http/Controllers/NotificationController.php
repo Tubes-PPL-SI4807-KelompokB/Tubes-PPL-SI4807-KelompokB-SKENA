@@ -15,26 +15,23 @@ class NotificationController extends Controller
     {
         $notifications = Notification::where('user_id', Auth::id())
             ->latest()
-            ->get();
+            ->paginate(15);
 
         return view('notifications.index', compact('notifications'));
     }
 
     /**
-     * PBI-17 – update status notifikasi
+     * PBI-17 – tandai notifikasi sudah dibaca
      */
     public function update(Request $request, $id)
     {
         $notification = Notification::where('user_id', Auth::id())
             ->findOrFail($id);
 
-        $notification->update([
-            'is_read' => true,
-        ]);
+        $notification->markAsRead();
 
         return redirect()
             ->route('notifications.index')
             ->with('success', 'Notifikasi berhasil ditandai sudah dibaca.');
     }
 }
-```

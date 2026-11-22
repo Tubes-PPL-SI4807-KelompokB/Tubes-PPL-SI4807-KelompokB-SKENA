@@ -10,15 +10,15 @@ use App\Models\Notification;
  */
 class NotificationService
 {
-    public function send(int $userId, string $type, string $message, ?int $relatedId = null): Notification
+    public function send(int $userId, string $type, string $title, string $message, array $data = []): Notification
     {
-        // TODO: kirim notifikasi (database / broadcast)
         return Notification::create([
-            'user_id'    => $userId,
-            'type'       => $type,
-            'message'    => $message,
-            'related_id' => $relatedId,
-            'is_read'    => false,
+            'user_id' => $userId,
+            'type'    => $type,
+            'title'   => $title,
+            'message' => $message,
+            'data'    => $data ?: null,
+            'is_read' => false,
         ]);
     }
 }
