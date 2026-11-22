@@ -17,15 +17,16 @@ class DashboardController extends Controller
 {
     public function index()
     {
+        // Beranda adalah halaman awal untuk semua pengunjung; $user null untuk tamu.
         $user = Auth::user();
 
-        // Jika admin membuka route /dashboard, arahkan ke dashboard admin
-        if ($user->isAdmin()) {
+        // Admin yang membuka beranda diarahkan ke dashboard admin
+        if ($user?->isAdmin()) {
             return redirect()->route('admin.dashboard');
         }
 
         // Mode awal: penyedia untuk akun freelancer, pencari untuk lainnya.
-        $initialMode = $user->isFreelancer() ? 'penyedia' : 'pencari';
+        $initialMode = $user?->isFreelancer() ? 'penyedia' : 'pencari';
 
         // Ringkasan per mode — data contoh sesuai Claude Design "Dashboard Page".
         $modes = [

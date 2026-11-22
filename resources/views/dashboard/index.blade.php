@@ -8,7 +8,8 @@
 --}}
 
 @php
-    $firstName = \Illuminate\Support\Str::of($user->name)->before(' ');
+    // Beranda = halaman awal untuk semua pengunjung; $user null untuk tamu.
+    $firstName = $user ? \Illuminate\Support\Str::of($user->name)->before(' ') : null;
     $status = [
         'Dikerjakan'   => ['#E0ECF6', '#346284', '#3F749C'],
         'Revisi Klien' => ['#FEF3C7', '#B45309', '#F59E0B'],
@@ -54,11 +55,21 @@
             <div class="flex items-center gap-3.5 text-[12px] leading-none font-bold tracking-[0.14em]">
                 <span class="w-10 h-px bg-white/70"></span>SELAMAT DATANG DI SKENA<span class="w-10 h-px bg-white/70"></span>
             </div>
-            <h1 class="mt-[22px] text-[38px] sm:text-[54px] leading-[1.04] tracking-[-0.035em] font-bold">Halo, {{ $firstName }}!<br>Cari &amp; Tawarkan Jasa</h1>
-            <p class="mt-[18px] max-w-[470px] text-[16px] leading-normal font-semibold">Mau cari atau tawarkan jasa hari ini? Kolaborasi antar mahasiswa, cepat dan ramah kantong kuliah.</p>
+            <h1 class="mt-[22px] text-[38px] sm:text-[54px] leading-[1.04] tracking-[-0.035em] font-bold">Halo, {{ $firstName ?? 'Mahasiswa' }}!<br>Cari &amp; Tawarkan Jasa</h1>
+            <p class="mt-[18px] max-w-[470px] text-[16px] leading-normal font-semibold">
+                @auth
+                    Mau cari atau tawarkan jasa hari ini? Kolaborasi antar mahasiswa, cepat dan ramah kantong kuliah.
+                @else
+                    Jasa dari mahasiswa terverifikasi untuk mahasiswa. Cepat, aman, dan ramah kantong kuliah.
+                @endauth
+            </p>
             <div class="flex flex-col sm:flex-row gap-3 mt-7 w-full sm:w-auto">
                 <a href="{{ route('home') }}" class="h-14 pl-7 pr-2 rounded-full bg-white text-on-surface flex items-center justify-between gap-3.5 text-[15px] font-bold">Cari Jasa<span class="w-10 h-10 rounded-full bg-primary text-white grid place-items-center"><span class="msr">arrow_forward</span></span></a>
-                <a href="{{ route('services.create') }}" class="h-14 px-7 rounded-full border-[1.5px] border-white text-white flex items-center justify-center text-[15px] font-bold hover:bg-white/10">Tawarkan Jasa</a>
+                @auth
+                    <a href="{{ route('services.create') }}" class="h-14 px-7 rounded-full border-[1.5px] border-white text-white flex items-center justify-center text-[15px] font-bold hover:bg-white/10">Tawarkan Jasa</a>
+                @else
+                    <a href="{{ route('register') }}" class="h-14 px-7 rounded-full border-[1.5px] border-white text-white flex items-center justify-center text-[15px] font-bold hover:bg-white/10">Daftar Gratis</a>
+                @endauth
             </div>
         </div>
 
@@ -80,7 +91,8 @@
         </div>
     </section>
 
-    {{-- Ringkasan --}}
+    @auth
+    {{-- Ringkasan (hanya untuk pengguna yang sudah masuk) --}}
     <div id="ringkasan" class="mt-14 flex flex-col sm:flex-row sm:justify-between sm:items-end gap-4">
         <div><div class="{{ $kicker }}">RINGKASAN</div><h2 class="{{ $h2 }}">Aktivitas Kamu</h2></div>
         <div class="flex p-1 rounded-full bg-white border border-border self-start sm:self-auto" role="group" aria-label="Mode peran">
@@ -105,10 +117,11 @@
             @endforeach
         </div>
     @endforeach
+    @endauth
 
     {{-- Rekomendasi --}}
     <div class="mt-14 flex justify-between items-end gap-4">
-        <div><div class="{{ $kicker }}">REKOMENDASI KAMPUS</div><h2 class="{{ $h2 }}">Jasa Pilihan untuk Kamu</h2></div>
+        <div><div class="{{ $kicker }}">REKOMENDASI KAMPUS</div><h2 class="{{ $h2 }}">{{ $user ? 'Jasa Pilihan untuk Kamu' : 'Jasa Populer di Kampus' }}</h2></div>
         <a href="{{ route('home') }}" class="text-[14px] font-semibold text-primary hover:text-primary-hover whitespace-nowrap">Lihat Semua Jasa</a>
     </div>
     {{-- Grid ke bawah: 4 kolom x 3 baris di desktop (12 jasa), menyusut ke 3/2/1 kolom --}}
@@ -138,7 +151,8 @@
         @endforeach
     </div>
 
-    {{-- Status terkini --}}
+    @auth
+    {{-- Status terkini (hanya untuk pengguna yang sudah masuk) --}}
     <div class="mt-14 flex justify-between items-end gap-4">
         <div><div class="{{ $kicker }}">STATUS TERKINI</div><h2 class="{{ $h2 }}">Aktivitas Pesanan Kamu</h2></div>
         <a href="{{ route('orders.index') }}" class="text-[14px] font-semibold text-primary hover:text-primary-hover whitespace-nowrap">Lihat Semua Pesanan</a>
@@ -157,5 +171,6 @@
             </div>
         @endforeach
     </div>
+    @endauth
 </div>
 @endsection
