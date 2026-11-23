@@ -28,6 +28,6 @@
             <h1>@yield('page-title', 'Dashboard Admin')</h1>
             <p>@yield('page-subtitle', 'Kelola dan pantau ekosistem jasa mahasiswa SKENA.')</p>
         </div>
-        <a class="btn-line" href="{{ route('home') }}" target="_blank" rel="noopener">Lihat Situs <svg class="ic sm"><use href="#i-upright"/></svg></a>
+        <a class="btn-line" href="{{ route('dashboard') }}" target="_blank" rel="noopener">Lihat Situs <svg class="ic sm"><use href="#i-upright"/></svg></a>
     </div>
 @endsection

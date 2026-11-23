@@ -47,7 +47,10 @@ Route::middleware('guest')->group(function () {
 });
 
 // ── Publik ─────────────────────────────────────────────────────────────────
-Route::get('/', [SearchController::class, 'index'])->name('home');                                  // FR-25
+Route::get('/', [DashboardController::class, 'index'])->name('dashboard');                          // FR-04 – halaman awal (tamu & pengguna)
+Route::get('/jelajahi', [SearchController::class, 'index'])->name('home');                          // FR-25 – katalog jasa
+Route::permanentRedirect('/beranda', '/');                                                          // URL lama
+Route::permanentRedirect('/dashboard', '/');                                                        // URL lama
 Route::get('/services/{service}', [ServiceDetailController::class, 'show'])->name('services.show'); // FR-26
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
@@ -57,8 +60,6 @@ Route::middleware('auth')->group(function () {
     Route::post('/verifikasi', [VerificationController::class, 'verify'])->name('verification.verify');
     Route::post('/verifikasi/kirim-ulang', [VerificationController::class, 'resend'])->middleware('throttle:6,1')->name('verification.resend');
     Route::get('/verifikasi/berhasil', [VerificationController::class, 'done'])->name('verification.done');      // TIM-A ta-3
-    Route::get('/beranda', [DashboardController::class, 'index'])->name('dashboard');               // FR-04
-    Route::permanentRedirect('/dashboard', '/beranda');                                             // URL lama
     Route::resource('profile', ProfileController::class)->only(['index', 'edit', 'update']);        // PBI-01
     Route::resource('experiences', ExperienceController::class);                                    // PBI-01
     Route::resource('skills', SkillController::class);                                              // PBI-02

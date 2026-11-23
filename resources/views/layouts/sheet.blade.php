@@ -52,7 +52,7 @@
 <div class="scrim" id="scrim"></div>
 <aside class="drawer" id="drawer" aria-label="Menu utama" aria-hidden="true">
     <div class="dh">
-        <a class="logo" href="{{ $authUser ? route('dashboard') : route('home') }}">SKENA</a>
+        <a class="logo" href="{{ route('dashboard') }}">SKENA</a>
         <button class="circ" id="closeDrawer" aria-label="Tutup menu"><span class="msr">close</span></button>
     </div>
     <nav>
@@ -66,6 +66,8 @@
                 {!! $navItem('Portofolio', 'folder_open', route('portfolios.index'), request()->routeIs('portfolios.*')) !!}
                 {!! $navItem('Profil', 'person', route('profile.index'), request()->routeIs('profile.*')) !!}
             @else
+                {!! $navItem('Beranda', 'home', route('dashboard'), request()->routeIs('dashboard')) !!}
+                {!! $navItem('Jelajahi Jasa', 'search', route('home'), request()->routeIs('home')) !!}
                 {!! $navItem('Masuk', 'login', route('login'), request()->routeIs('login')) !!}
                 {!! $navItem('Daftar Akun', 'person_add', route('register'), request()->routeIs('register')) !!}
             @endauth
@@ -88,7 +90,7 @@
                 <span class="msr" style="font-size:22px">menu</span>
             </button>
         </div>
-        <a class="logo" href="{{ $authUser ? route('dashboard') : route('home') }}" aria-label="SKENA">SKENA</a>
+        <a class="logo" href="{{ route('dashboard') }}" aria-label="SKENA">SKENA</a>
         <div class="top-right">
             <a class="lnk" href="#">Bantuan</a>
             @auth
@@ -138,7 +140,7 @@
     <footer>
         <span class="logo">SKENA</span>
         <nav>
-            <a href="{{ route('home') }}">Tentang</a>
+            <a href="{{ route('dashboard') }}">Tentang</a>
             <a href="#">Syarat &amp; Ketentuan</a>
             <a href="#">Bantuan</a>
         </nav>
