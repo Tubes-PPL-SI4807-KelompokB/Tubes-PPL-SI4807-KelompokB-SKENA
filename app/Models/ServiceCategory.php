@@ -42,9 +42,29 @@ class ServiceCategory extends Model
     public function scopeSearch($query, $keyword)
     {
         if ($keyword) {
-            return $query->where('nama_kategori', 'like', "%{$keyword}%")
-                         ->orWhere('deskripsi', 'like', "%{$keyword}%");
+            return $query->where(function ($q) use ($keyword) {
+                $q->where('nama_kategori', 'like', "%{$keyword}%")
+                  ->orWhere('deskripsi', 'like', "%{$keyword}%");
+            });
         }
         return $query;
+    }
+
+    /** Ikon Material Symbols untuk kategori (desain PBI-05), ditebak dari namanya. */
+    public function getIconAttribute(): string
+    {
+        $name = mb_strtolower($this->nama_kategori ?? '');
+        $map = [
+            'desain' => 'palette', 'tutor' => 'school', 'akademik' => 'school', 'video' => 'movie',
+            'animasi' => 'movie', 'web' => 'language', 'teknologi' => 'language', 'data' => 'table_chart',
+            'office' => 'description', 'dokumen' => 'description', 'foto' => 'photo_camera', 'media' => 'photo_camera',
+            'tulis' => 'edit_note', 'musik' => 'music_note', 'terjemah' => 'translate',
+        ];
+        foreach ($map as $key => $icon) {
+            if (str_contains($name, $key)) {
+                return $icon;
+            }
+        }
+        return 'category';
     }
 }

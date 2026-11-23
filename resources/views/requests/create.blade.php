@@ -311,7 +311,7 @@
                     <p>{{ $service->deskripsi }}</p>
                 @endif
 
-                <p>Estimasi pengerjaan: {{ $service->durasi }} hari</p>
+                <p>Estimasi pengerjaan: {{ $service->durasi_label }}</p>
             </div>
 
             <div class="request-service-price">

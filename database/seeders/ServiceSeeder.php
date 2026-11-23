@@ -39,7 +39,7 @@ class ServiceSeeder extends Seeder
                 'judul' => 'Desain presentasi (PPT)',
                 'deskripsi' => 'Saya membantu merapikan slide presentasi tugas kuliah: tata letak rapi, ikon modern, dan palet warna yang konsisten. Maksimal 15 slide per pesanan, revisi 2 kali.',
                 'harga' => 20000,
-                'durasi' => 2,
+                'durasi' => '2 hari',
                 'status' => 'aktif',
             ],
             [
@@ -48,7 +48,7 @@ class ServiceSeeder extends Seeder
                 'judul' => 'Foto produk sederhana',
                 'deskripsi' => 'Foto produk katalog untuk jualan makanan atau merchandise UKM kampus. Menggunakan mini studio box dan pencahayaan memadai. Hasil 5 foto teredit.',
                 'harga' => 50000,
-                'durasi' => 3,
+                'durasi' => '3 hari',
                 'status' => 'aktif',
             ],
             [
@@ -57,7 +57,7 @@ class ServiceSeeder extends Seeder
                 'judul' => 'Bantuan Excel dasar',
                 'deskripsi' => 'Membantu merapikan data tabel, rumus VLOOKUP/XLOOKUP, IF bertingkat, Pivot Table, dan pembuatan grafik visual untuk tugas kuliah atau laporan keuangan organisasi.',
                 'harga' => 25000,
-                'durasi' => 1,
+                'durasi' => '1 hari',
                 'status' => 'aktif',
             ],
             [
@@ -66,7 +66,7 @@ class ServiceSeeder extends Seeder
                 'judul' => 'Edit video 1 menit',
                 'deskripsi' => 'Editing video pendek untuk reels Instagram, TikTok kegiatan kampus, pemotongan transisi dinamis, penambahan teks/caption otomatis, dan backsound bebas hak cipta.',
                 'harga' => 30000,
-                'durasi' => 2,
+                'durasi' => '2 hari',
                 'status' => 'aktif',
             ],
             [
@@ -75,7 +75,7 @@ class ServiceSeeder extends Seeder
                 'judul' => 'Setup website portofolio',
                 'deskripsi' => 'Membantu mahasiswa membuat website profil/portofolio online dengan HTML/CSS/Tailwind, deploy gratis ke GitHub Pages atau Vercel agar siap dipamerkan ke calon klien/magang.',
                 'harga' => 50000,
-                'durasi' => 3,
+                'durasi' => '3 hari',
                 'status' => 'aktif',
             ],
             [
@@ -84,7 +84,7 @@ class ServiceSeeder extends Seeder
                 'judul' => 'Tutor SQL per jam',
                 'deskripsi' => 'Sesi bimbingan 1-on-1 belajar Query SQL: DDL, DML, JOIN tabel, grouping, subquery, dan latihan soal praktikum basis data hingga paham tuntas.',
                 'harga' => 30000,
-                'durasi' => 1,
+                'durasi' => '1 jam/sesi',
                 'status' => 'aktif',
             ],
         ];

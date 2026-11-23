@@ -27,7 +27,6 @@ class Service extends Model
 
     protected $casts = [
         'harga' => 'decimal:2',
-        'durasi' => 'integer',
     ];
 
     /**
@@ -81,6 +80,39 @@ class Service extends Model
     public function portfolios()
     {
         return $this->hasMany(Portfolio::class, 'service_id', 'id');
+    }
+
+    /** Request jasa (PBI-10) yang memakai jasa ini. */
+    public function serviceRequests()
+    {
+        return $this->hasMany(ServiceRequest::class, 'service_id', 'id');
+    }
+
+    /** Pesanan (PBI-11) yang memakai jasa ini. */
+    public function orders()
+    {
+        return $this->hasMany(Order::class, 'service_id', 'id');
+    }
+
+    /** Jasa yang sudah pernah dipesan/di-request tidak boleh dihapus permanen. */
+    public function hasTransactions(): bool
+    {
+        return $this->serviceRequests()->exists() || $this->orders()->exists();
+    }
+
+    /**
+     * Durasi untuk ditampilkan: data lama berupa angka hari ("2") → "2 hari".
+     */
+    public function getDurasiLabelAttribute(): string
+    {
+        $d = trim((string) $this->durasi);
+        return ctype_digit($d) ? $d . ' hari' : $d;
+    }
+
+    /** Jasa per jam ditampilkan "Rp30.000/jam" seperti desain PBI-04. */
+    public function getHargaLabelAttribute(): string
+    {
+        return $this->formatted_harga . (str_contains((string) $this->durasi, 'jam') ? '/jam' : '');
     }
 
     /**

@@ -51,7 +51,7 @@ Route::get('/', [DashboardController::class, 'index'])->name('dashboard');      
 Route::get('/jelajahi', [SearchController::class, 'index'])->name('home');                          // FR-25 – katalog jasa
 Route::permanentRedirect('/beranda', '/');                                                          // URL lama
 Route::permanentRedirect('/dashboard', '/');                                                        // URL lama
-Route::get('/services/{service}', [ServiceDetailController::class, 'show'])->name('services.show'); // FR-26
+Route::get('/services/{service}', [ServiceDetailController::class, 'show'])->whereNumber('service')->name('services.show'); // FR-26
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 // ── Authenticated ──────────────────────────────────────────────────────────
@@ -63,6 +63,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('profile', ProfileController::class)->only(['index', 'edit', 'update']);        // PBI-01
     Route::resource('experiences', ExperienceController::class);                                    // PBI-01
     Route::resource('skills', SkillController::class);                                              // PBI-02
+    Route::patch('services/{service}/status', [ServiceController::class, 'toggleStatus'])->name('services.status'); // PBI-04
     Route::resource('services', ServiceController::class)->except(['show']);                        // PBI-04
     Route::resource('portfolios', PortfolioController::class);                                      // PBI-06
     Route::resource('favorites', FavoriteController::class)->only(['index', 'store', 'destroy']);   // PBI-07
