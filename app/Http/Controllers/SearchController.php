@@ -111,6 +111,12 @@ class SearchController extends Controller
         return null;
     }
 
+    /** Foto contoh kategori untuk thumbnail jasa (dipakai juga form request PBI-10) */
+    public static function imageFor(?string $categoryName): string
+    {
+        return self::IMAGES[(new self)->groupOf($categoryName)] ?? 'jasa-ppt.jpg';
+    }
+
     /** Bentuk data kartu katalog yang dipakai view home.index */
     private function toCard(Service $s, $groups): array
     {

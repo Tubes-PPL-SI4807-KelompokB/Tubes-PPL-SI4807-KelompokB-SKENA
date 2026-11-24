@@ -12,6 +12,20 @@ class ServiceRequest extends Model
 
     protected $table = 'service_requests';
 
+    /** Status request (nilai tersimpan di kolom status). */
+    public const PENDING   = 'pending';
+    public const ACCEPTED  = 'accepted';
+    public const REJECTED  = 'rejected';
+    public const CANCELLED = 'cancelled';
+
+    /** Label tampilan sesuai desain PBI-10: nilai => label */
+    public const LABELS = [
+        self::PENDING   => 'Menunggu',
+        self::ACCEPTED  => 'Diterima',
+        self::REJECTED  => 'Ditolak',
+        self::CANCELLED => 'Dibatalkan',
+    ];
+
     protected $fillable = [
         'seeker_id',
         'service_id',
@@ -36,5 +50,15 @@ class ServiceRequest extends Model
     public function service(): BelongsTo
     {
         return $this->belongsTo(Service::class, 'service_id');
+    }
+
+    public function getStatusLabelAttribute(): string
+    {
+        return self::LABELS[$this->status] ?? ucfirst((string) $this->status);
+    }
+
+    public function isPending(): bool
+    {
+        return $this->status === self::PENDING;
     }
 }
