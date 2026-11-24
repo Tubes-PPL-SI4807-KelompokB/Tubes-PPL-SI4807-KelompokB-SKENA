@@ -44,9 +44,7 @@
     <div class="pt-10 pb-8">
         <div class="text-[11px] leading-[1.2] font-bold tracking-[0.06em] text-primary">REQUEST SAYA</div>
         <div class="flex flex-wrap items-center gap-x-3.5 gap-y-2 mt-2.5">
-            <span class="h-[30px] px-3.5 rounded-full bg-primary text-white text-[13px] leading-[30px] font-bold">PBI-10</span>
-            <h1 class="m-0 text-[26px] sm:text-[32px] leading-[1.15] tracking-[-0.02em] font-bold">Manajemen Request Jasa</h1>
-            <span class="text-[14px] font-semibold text-on-surface-muted">Sprint 1</span>
+            <h1 class="m-0 text-[26px] sm:text-[32px] leading-[1.15] tracking-[-0.02em] font-bold">Request Jasa Saya</h1>
         </div>
         <p class="mt-2.5 text-[15px] leading-normal text-on-surface-muted">Request yang masih menunggu bisa diubah atau dibatalkan.</p>
     </div>
