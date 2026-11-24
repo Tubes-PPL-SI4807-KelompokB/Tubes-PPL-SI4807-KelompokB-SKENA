@@ -26,7 +26,7 @@
     @endif
     @include('admin._head', [
         'kicker' => 'ADMINISTRASI',
-        'title'  => 'Manajemen Role dan Hak Akses (FR-06)',
+        'title'  => 'Role & Hak Akses',
         'desc'   => 'Pilih role, lalu atur apa saja yang boleh dilihat dan diubah di tiap modul.',
         'pad'    => 'pt-6 pb-8',
     ])

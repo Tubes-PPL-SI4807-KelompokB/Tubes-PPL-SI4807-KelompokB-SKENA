@@ -51,7 +51,7 @@ class ServiceCategoryTest extends TestCase
 
         $this->actingAs($admin)->get(route('admin.categories.index'))
             ->assertOk()
-            ->assertSee('Manajemen Kategori Jasa')
+            ->assertSee('Kategori Jasa')
             ->assertSee('Desain PPT dan poster.')
             ->assertSeeInOrder(['Desain', '1', 'jasa']);
     }

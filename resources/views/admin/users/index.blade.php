@@ -1,5 +1,5 @@
 @extends('layouts.admin')
-@section('page-title', 'Manajemen Pengguna')
+@section('page-title', 'Pengguna')
 
 {{--
     TIM-E Manajemen Pengguna/Akun (FR-05) — persis Claude Design:
@@ -51,7 +51,7 @@
     </div>
     @include('admin._head', [
         'kicker' => 'ADMINISTRASI',
-        'title'  => 'Manajemen Pengguna/Akun (FR-05)',
+        'title'  => 'Pengguna',
         'desc'   => number_format($total, 0, ',', '.') . ' pengguna terdaftar · ' . $users->total() . ' ditampilkan dengan filter "' . $filters[$filter] . '"' . ($search ? ' dan pencarian "' . $search . '"' : '') . '.',
     ])
 @endsection

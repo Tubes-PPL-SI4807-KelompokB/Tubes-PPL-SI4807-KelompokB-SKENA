@@ -11,7 +11,7 @@
         <input id="adminSearch" type="search" name="search" placeholder="Cari pengguna, jasa, atau pesanan…"
                class="flex-1 min-w-0 border-0 outline-none bg-transparent text-[15px] text-on-surface placeholder:text-on-surface-muted">
     </form>
-    @include('admin._head', ['kicker' => 'RINGKASAN PLATFORM', 'title' => 'Dashboard Admin (FR-03)', 'desc' => 'Pantau pengguna, jasa, pesanan, dan laporan dalam satu tempat.'])
+    @include('admin._head', ['kicker' => 'RINGKASAN PLATFORM', 'title' => 'Dashboard Admin', 'desc' => 'Pantau pengguna, jasa, pesanan, dan laporan dalam satu tempat.'])
 @endsection
 
 @section('content')
