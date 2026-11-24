@@ -16,8 +16,9 @@ class ServiceSeeder extends Seeder
 {
     public function run(): void
     {
-        $provider = User::where('email', 'anindya@student.telkomuniversity.ac.id')->first()
-            ?? User::first();
+        // Jasa contoh dimiliki akun freelancer terverifikasi (akun demo "Freelancer")
+        $provider = User::where('email', 'earliyanza@student.telkomuniversity.ac.id')->first()
+            ?? User::whereHas('role', fn ($q) => $q->where('name', 'freelancer'))->first();
 
         if (!$provider) {
             return;
