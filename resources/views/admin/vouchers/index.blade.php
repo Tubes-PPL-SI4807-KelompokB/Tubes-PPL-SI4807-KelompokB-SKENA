@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 @section('title', 'Voucher/Promo — SKENA')
-@section('page-title', 'Manajemen Voucher/Promo')
+@section('page-title', 'Voucher & Promo')
 @section('page-subtitle', 'Voucher bisa dipakai pencari jasa saat mengubah pesanan.')
 
 @section('content')

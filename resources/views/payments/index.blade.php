@@ -34,9 +34,7 @@
 <div class="pt-2 pb-8">
     <div class="text-label-sm text-primary tracking-widest uppercase">RIWAYAT</div>
     <div class="flex items-center gap-[14px] mt-[10px]">
-        <span class="inline-flex h-[30px] items-center px-[14px] rounded-full bg-primary text-white font-bold text-[13px]">PBI-13</span>
-        <h1 class="m-0 text-headline-lg">Manajemen Pembayaran</h1>
-        <span class="text-[14px] font-semibold text-on-surface-muted">Sprint 1</span>
+        <h1 class="m-0 text-headline-lg">Pembayaran</h1>
     </div>
     <p class="mt-[10px] text-body-md text-on-surface-muted">
         Bukti bisa diubah atau dihapus selama belum dikonfirmasi penyedia.
