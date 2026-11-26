@@ -66,10 +66,18 @@ class ServiceRequestController extends Controller
             ->active()
             ->find($serviceId);
 
-        abort_if(!$service, 404, 'Jasa tidak ditemukan atau sudah tidak aktif.');
+        if (!$service) {
+            return redirect()->route('home')
+                ->with('error', 'Jasa ini sedang tidak tersedia. Pilih jasa lain di halaman Jelajahi Jasa.');
+        }
 
         if ($service->provider_id === auth()->id()) {
             return redirect()->route('home')->with('error', 'Kamu tidak bisa mengajukan request untuk jasamu sendiri.');
+        }
+
+        if ($this->hasPendingFor($service->id)) {
+            return redirect()->route('requests.index', ['status' => ServiceRequest::PENDING])
+                ->with('error', 'Kamu masih punya request yang menunggu untuk jasa ini. Ubah request itu bila ada yang berubah.');
         }
 
         return view('requests.create', compact('service'));
@@ -92,6 +100,11 @@ class ServiceRequestController extends Controller
 
         if ($service->provider_id === auth()->id()) {
             return back()->withInput()->with('error', 'Kamu tidak bisa mengajukan request untuk jasamu sendiri.');
+        }
+
+        if ($this->hasPendingFor($service->id)) {
+            return redirect()->route('requests.index', ['status' => ServiceRequest::PENDING])
+                ->with('error', 'Kamu masih punya request yang menunggu untuk jasa ini. Ubah request itu bila ada yang berubah.');
         }
 
         $item = ServiceRequest::create([
@@ -155,6 +168,15 @@ class ServiceRequestController extends Controller
         }
 
         return redirect()->route('requests.index')->with('success', 'Request dibatalkan, penyedia akan diberi tahu');
+    }
+
+    /** Cegah request ganda: satu request menunggu per jasa per pencari. */
+    private function hasPendingFor(int $serviceId): bool
+    {
+        return ServiceRequest::where('seeker_id', auth()->id())
+            ->where('service_id', $serviceId)
+            ->where('status', ServiceRequest::PENDING)
+            ->exists();
     }
 
     private function pendingOfUser($id): ServiceRequest

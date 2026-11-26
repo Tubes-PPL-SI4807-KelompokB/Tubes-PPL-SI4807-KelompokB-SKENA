@@ -8,7 +8,10 @@
 
 @php
     $failed  = $errors->has('email') || $errors->has('password');
-    $expired = session('session_expired') || session()->has('url.intended');
+    // Sesi berakhir (token kedaluwarsa) dibedakan dari tamu yang diarahkan ke login dari halaman terkunci.
+    $sessionEnded = (bool) session('session_expired');
+    $needLogin    = ! $sessionEnded && session()->has('url.intended');
+    $expired      = $sessionEnded || $needLogin;
     $blocked = $errors->has('email') && str_contains($errors->first('email'), 'dinonaktifkan');
 @endphp
 
@@ -20,7 +23,11 @@
     <div class="bg-white border border-border rounded-3xl shadow-card px-6 py-10 sm:p-14 flex flex-col justify-center gap-5 w-full">
         @if($expired)
             <div class="flex gap-3 items-center px-[18px] py-3.5 rounded-[18px] bg-warning-container text-on-warning-container text-[14px] leading-[1.4] font-semibold" role="status">
-                <span class="msr" style="font-size:22px">schedule</span>Sesi berakhir karena tidak aktif. Masuk lagi untuk melanjutkan.
+                @if($sessionEnded)
+                    <span class="msr" style="font-size:22px">schedule</span>Sesi berakhir karena tidak aktif. Masuk lagi untuk melanjutkan.
+                @else
+                    <span class="msr" style="font-size:22px">login</span>Masuk dulu untuk melanjutkan. Setelah masuk, kamu kembali ke halaman tadi.
+                @endif
             </div>
         @endif
 
@@ -55,7 +62,7 @@
                 </div>
                 <p class="err" id="password-err" @unless($failed) hidden @endunless role="alert">
                     <span class="msr">error</span>
-                    <span data-err-text>@if($blocked){{ $errors->first('email') }}@elseif($failed)Email atau kata sandi salah. Periksa lagi atau <a href="#" class="font-semibold underline text-[#B91C1C]">atur ulang kata sandi</a>.@endif</span>
+                    <span data-err-text>@if($blocked){{ $errors->first('email') }}@elseif($failed)Email atau kata sandi salah. Periksa lagi penulisannya lalu coba masuk kembali.@endif</span>
                 </p>
             </div>
 
@@ -85,7 +92,7 @@
                         ['Admin', 'admin_panel_settings', 'admin@skena.id'],
                         ['Freelancer', 'storefront', 'earliyanza@student.telkomuniversity.ac.id'],
                         ['Mahasiswa (pending)', 'school', 'anindya@student.telkomuniversity.ac.id'],
-                        ['Klien', 'person_search', 'rizal@kreatifstudio.com'],
+                        ['Klien', 'person_search', 'rizal@student.telkomuniversity.ac.id'],
                     ] as [$label, $icon, $mail])
                         <button type="button" data-demo="{{ $mail }}"
                                 class="h-10 px-4 rounded-full bg-tint text-primary hover:bg-primary hover:text-white flex items-center gap-1.5 text-[14px] font-semibold transition-colors">

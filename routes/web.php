@@ -63,23 +63,27 @@ Route::middleware('auth')->group(function () {
     Route::resource('profile', ProfileController::class)->only(['index', 'edit', 'update']);        // PBI-01
     Route::resource('experiences', ExperienceController::class);                                    // PBI-01
     Route::resource('skills', SkillController::class);                                              // PBI-02
-    Route::patch('services/{service}/status', [ServiceController::class, 'toggleStatus'])->name('services.status'); // PBI-04
-    Route::resource('services', ServiceController::class)->except(['show']);                        // PBI-04
+    Route::patch('services/{service}/status', [ServiceController::class, 'toggleStatus'])->middleware('verified.student')->name('services.status'); // PBI-04
+    Route::resource('services', ServiceController::class)->except(['show'])
+        ->middlewareFor(['create', 'store', 'edit', 'update'], 'verified.student');                     // PBI-04
     Route::resource('portfolios', PortfolioController::class);                                      // PBI-06
     Route::resource('favorites', FavoriteController::class)->only(['index', 'store', 'destroy']);   // PBI-07
     Route::resource('saved-searches', SavedSearchController::class)->only(['index', 'store', 'destroy']); // PBI-08
-    Route::resource('requests', ServiceRequestController::class);                                   // PBI-10
+    Route::resource('requests', ServiceRequestController::class)
+        ->middlewareFor(['create', 'store', 'edit', 'update'], 'verified.student');                                // PBI-10
     Route::get('orders/incoming-requests', [OrderController::class, 'incomingRequests'])
         ->name('orders.incoming');
     Route::post('requests/{id}/accept', [OrderController::class, 'acceptRequest'])
-        ->whereNumber('id')
+        ->whereNumber('id')->middleware('verified.student')
         ->name('requests.accept');
     Route::post('requests/{id}/reject', [OrderController::class, 'rejectRequest'])
-        ->whereNumber('id')
+        ->whereNumber('id')->middleware('verified.student')
         ->name('requests.reject');
-    Route::resource('orders', OrderController::class)->only(['index', 'show', 'update']);          // PBI-11
+    Route::resource('orders', OrderController::class)->only(['index', 'show', 'update'])
+        ->middlewareFor('update', 'verified.student');          // PBI-11
     Route::resource('orders.negotiations', NegotiationController::class)->shallow();               // PBI-12
-    Route::resource('payments', PaymentController::class)->only(['index', 'create', 'store', 'show', 'update', 'destroy']); // PBI-13
+    Route::resource('payments', PaymentController::class)->only(['index', 'create', 'store', 'show', 'update', 'destroy'])
+        ->middlewareFor(['create', 'store', 'update'], 'verified.student'); // PBI-13
     Route::resource('work-progress', WorkProgressController::class)->only(['index', 'show', 'update']); // PBI-14
     Route::resource('messages', MessageController::class)->only(['index', 'store']);               // PBI-15
     Route::resource('reviews', ReviewController::class)->only(['index', 'store']);                 // PBI-16

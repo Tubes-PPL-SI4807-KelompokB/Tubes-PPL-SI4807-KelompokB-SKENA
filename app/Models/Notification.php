@@ -42,6 +42,23 @@ class Notification extends Model
         return $query->where('is_read', false);
     }
 
+    /**
+     * Halaman tujuan notifikasi berdasarkan isi kolom data (null bila tidak ada).
+     * Dipakai lonceng di header dan tombol "Lihat" di halaman notifikasi.
+     */
+    public function getUrlAttribute(): ?string
+    {
+        $data = $this->data ?? [];
+
+        return match (true) {
+            isset($data['payment_id'])         => route('payments.show', $data['payment_id']),
+            isset($data['order_id'])           => route('orders.show', $data['order_id']),
+            isset($data['service_request_id']) => route('orders.index', ['peran' => 'penyedia', 'status' => 'baru']),
+            isset($data['request_id'])         => route('requests.index'),
+            default                            => null,
+        };
+    }
+
     public function markAsRead(): void
     {
         if (! $this->is_read) {

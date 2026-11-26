@@ -33,9 +33,9 @@
             <input id="dashSearch" type="search" name="q" placeholder="Cari jasa…" class="flex-1 min-w-0 border-0 outline-none bg-transparent text-[15px] text-on-surface placeholder:text-on-surface-muted">
         </form>
         <div class="xl:ml-auto hidden xl:flex gap-2 max-w-full overflow-x-auto">
-            @foreach($categories as $c)
-                <a href="{{ $c === 'Semua' ? route('home') : route('home', ['kategori' => $c]) }}"
-                   class="h-11 px-5 rounded-full text-[14px] font-semibold border flex items-center whitespace-nowrap {{ $c === 'Semua' ? 'bg-primary border-primary text-white' : 'bg-white border-border text-on-surface-muted hover:text-on-surface' }}">{{ $c }}</a>
+            @foreach($categories as $slug => $c)
+                <a href="{{ $slug === '' ? route('home') : route('home', ['kategori' => $slug]) }}"
+                   class="h-11 px-5 rounded-full text-[14px] font-semibold border flex items-center whitespace-nowrap {{ $slug === '' ? 'bg-primary border-primary text-white' : 'bg-white border-border text-on-surface-muted hover:text-on-surface' }}">{{ $c }}</a>
             @endforeach
         </div>
     </div>

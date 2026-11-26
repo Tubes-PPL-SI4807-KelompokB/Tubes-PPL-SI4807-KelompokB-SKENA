@@ -30,6 +30,11 @@ class NotificationController extends Controller
 
         $notification->markAsRead();
 
+        // Tombol "Lihat": tandai dibaca lalu buka halaman terkait.
+        if ($request->boolean('buka') && $notification->url) {
+            return redirect($notification->url);
+        }
+
         return redirect()
             ->route('notifications.index')
             ->with('success', 'Notifikasi berhasil ditandai sudah dibaca.');

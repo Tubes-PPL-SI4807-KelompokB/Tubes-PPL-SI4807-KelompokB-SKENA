@@ -19,7 +19,7 @@
     </label>
 
     <div class="flex gap-2 ml-auto">
-        @foreach([['semua','Semua'], ['menunggu','Menunggu'], ['lunas','Lunas']] as [$val, $label])
+        @foreach([['semua','Semua'], ['menunggu','Menunggu'], ['lunas','Lunas'], ['ditolak','Ditolak']] as [$val, $label])
             <a
                 href="{{ route('payments.index', ['filter' => $val, 'search' => request('search')]) }}"
                 class="h-[44px] px-5 rounded-full font-semibold text-[14px] border whitespace-nowrap flex items-center
@@ -148,6 +148,11 @@
                             class="w-9 h-9 rounded-full border border-border grid place-items-center text-on-error-container hover:bg-error-container p-0">
                             <span class="msr" style="font-size:18px">delete</span>
                         </button>
+                    @elseif($canManageProof && $pay->status === 'ditolak')
+                        <a href="{{ route('payments.create', ['order_id' => $pay->order_id]) }}"
+                           class="h-9 px-4 rounded-full bg-primary text-white font-semibold text-[13px] flex items-center hover:bg-primary-hover whitespace-nowrap">
+                            Unggah Ulang
+                        </a>
                     @elseif($canManageProof && $pay->status === 'menunggu_pembayaran')
                         <a href="{{ route('payments.create', ['order_id' => $pay->order_id]) }}"
                            class="h-9 px-4 rounded-full bg-primary text-white font-semibold text-[13px] flex items-center hover:bg-primary-hover">

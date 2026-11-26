@@ -48,6 +48,7 @@ class RequestJasaFlowTest extends TestCase
             'email'             => "{$name}@student.telkomuniversity.ac.id",
             'password'          => 'password123',
             'email_verified_at' => now(),
+            'student_verification_status' => 'verified',
         ]);
     }
 
@@ -128,7 +129,8 @@ class RequestJasaFlowTest extends TestCase
     {
         $this->actingAs($this->seeker)
             ->get(route('requests.create', ['service_id' => 999]))
-            ->assertNotFound();
+            ->assertRedirect(route('home'))
+            ->assertSessionHas('error');
 
         $this->actingAs($this->seeker)
             ->post(route('requests.store'), [

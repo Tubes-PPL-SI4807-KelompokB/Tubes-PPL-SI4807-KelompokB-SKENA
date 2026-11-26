@@ -58,7 +58,7 @@
 
             <div class="fld">
                 <label for="nim">Konfirmasi NIM</label>
-                <input id="nim" name="nim" class="inp" value="{{ old('nim') }}" required maxlength="50" inputmode="numeric" autocomplete="off"
+                <input id="nim" name="nim" class="inp" value="{{ old('nim', auth()->user()?->nim) }}" required maxlength="50" inputmode="numeric" autocomplete="off"
                        aria-describedby="nim-hint" aria-invalid="{{ $errors->has('nim') ? 'true' : 'false' }}">
                 @error('nim')
                     <p class="err" role="alert"><span>{{ $message }}</span></p>

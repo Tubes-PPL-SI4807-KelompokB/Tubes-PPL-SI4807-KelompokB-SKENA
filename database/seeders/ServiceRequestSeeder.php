@@ -16,7 +16,7 @@ class ServiceRequestSeeder extends Seeder
     public function run(): void
     {
         $anin  = User::where('email', 'anindya@student.telkomuniversity.ac.id')->first();
-        $rizal = User::where('email', 'rizal@kreatifstudio.com')->first();
+        $rizal = User::where('email', 'rizal@student.telkomuniversity.ac.id')->first();
         $svc   = Service::pluck('id', 'judul');
 
         if (! $anin || ! $rizal || $svc->isEmpty()) {

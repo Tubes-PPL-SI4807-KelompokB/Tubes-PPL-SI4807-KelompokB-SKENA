@@ -9,6 +9,12 @@
         'method'    => 'POST',
         'desc'      => 'Jelaskan kebutuhanmu. Penyedia akan menerima atau menolak request ini.',
         'submit'    => 'Kirim Request',
-        'cancelUrl' => url()->previous() !== url()->current() ? url()->previous() : route('home'),
+        'cancelUrl' => (function () {
+            // Kembali ke halaman sebelumnya, kecuali halaman login/daftar/form ini sendiri.
+            $prev = url()->previous();
+            $skip = [url()->current(), route('login'), route('register')];
+
+            return in_array(strtok($prev, '?'), $skip, true) || $prev === url()->full() ? route('home') : $prev;
+        })(),
     ])
 @endsection

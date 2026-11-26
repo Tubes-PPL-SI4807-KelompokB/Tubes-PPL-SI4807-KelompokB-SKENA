@@ -49,6 +49,7 @@ class ServiceRequestTest extends TestCase
             'email'             => "{$key}@student.telkomuniversity.ac.id",
             'password'          => 'password123',
             'email_verified_at' => now(),
+            'student_verification_status' => 'verified',
         ]);
     }
 

@@ -398,6 +398,9 @@ body{background:linear-gradient(180deg,#E2E2E2 0%,#D7EEFD 100%) fixed}
 .dropdown.bell .bh{display:flex;justify-content:space-between;align-items:center;padding:18px 20px 12px}
 .dropdown.bell .bh b{font-size:16px}.dropdown.bell .bh span{font-size:12px;font-weight:600;color:var(--muted)}
 .dropdown.bell .bempty{padding:16px 20px;border-top:1px solid var(--line);font-size:14px;color:var(--muted)}
+.dropdown.bell .bitem button{display:flex;flex-direction:column;align-items:flex-start;gap:3px;width:100%;text-align:left;border-radius:0;line-height:1.4;font-weight:400;padding:12px 20px;border-top:1px solid var(--line);font-size:13px;color:var(--muted)}
+.dropdown.bell .bitem button:hover{background:var(--tint)}
+.dropdown.bell .bitem b{font-size:14px;color:var(--ink)}.dropdown.bell .bitem small{font-size:12px}
 .dropdown.bell .ball{display:block;text-align:center;padding:14px;border-top:1px solid var(--line);border-radius:0;color:var(--p);justify-content:center}
 .drawer{padding:28px 20px;border-radius:0;justify-content:flex-start;gap:4px;box-shadow:var(--shadow-hover)}
 .drawer .dh{padding:0 8px 24px;margin:0}

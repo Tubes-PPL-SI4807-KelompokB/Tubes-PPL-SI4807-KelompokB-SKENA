@@ -31,7 +31,7 @@ class ServiceTest extends TestCase
     {
         return User::create([
             'name' => ucfirst($name), 'email' => "{$name}@student.telkomuniversity.ac.id",
-            'password' => 'password123', 'email_verified_at' => now(),
+            'password' => 'password123', 'email_verified_at' => now(), 'student_verification_status' => 'verified',
         ]);
     }
 
@@ -191,7 +191,7 @@ class ServiceTest extends TestCase
             'kebutuhan' => 'Butuh 10 slide', 'tanggal' => now()->addWeek()->toDateString(), 'status' => 'menunggu',
         ]);
 
-        $this->actingAs($this->provider)->delete(route('services.destroy', $s))->assertSessionHas('error');
+        $this->actingAs($this->provider)->delete(route('services.destroy', $s))->assertSessionHas('success');
 
         $this->assertDatabaseHas('services', ['id' => $s->id, 'status' => 'nonaktif']);
     }

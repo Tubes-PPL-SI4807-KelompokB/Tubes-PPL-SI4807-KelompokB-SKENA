@@ -60,6 +60,8 @@
             @auth
                 {!! $navItem('Beranda', 'home', route('dashboard'), request()->routeIs('dashboard')) !!}
                 {!! $navItem('Pesanan', 'receipt_long', route('orders.index'), request()->routeIs('orders.*')) !!}
+                {!! $navItem('Request Saya', 'assignment', route('requests.index'), request()->routeIs('requests.*')) !!}
+                {!! $navItem('Pembayaran', 'payments', route('payments.index'), request()->routeIs('payments.*')) !!}
                 {!! $navItem('Chat', 'chat_bubble', route('messages.index'), request()->routeIs('messages.*')) !!}
                 {!! $navItem('Wishlist', 'favorite', route('favorites.index'), request()->routeIs('favorites.*')) !!}
                 {!! $navItem('Jasa Saya', 'storefront', route('services.index'), request()->routeIs('services.*')) !!}
@@ -95,7 +97,9 @@
             <a class="lnk" href="#">Bantuan</a>
             @auth
                 @php
-                    $unread = (int) ($unreadNotifications ?? 0);
+                    // PBI-17: lonceng membaca notifikasi belum dibaca milik pengguna.
+                    $bellItems = \App\Models\Notification::where('user_id', $authUser->id)->unread()->latest()->take(5)->get();
+                    $unread = $bellItems->count() < 5 ? $bellItems->count() : \App\Models\Notification::where('user_id', $authUser->id)->unread()->count();
                     $initials = collect(preg_split('/\s+/', trim($authUser->name)))->filter()->take(2)->map(fn ($w) => mb_strtoupper(mb_substr($w, 0, 1)))->implode('');
                     $userMeta = $authUser->isAdmin()
                         ? $authUser->email
@@ -109,7 +113,15 @@
                     </button>
                     <div class="dropdown bell" id="bellMenu">
                         <div class="bh"><b>Notifikasi</b><span>{{ $unread }} belum dibaca</span></div>
-                        <div class="bempty">Belum ada notifikasi baru.</div>
+                        @forelse($bellItems as $n)
+                            <form method="POST" action="{{ route('notifications.update', $n->id) }}" class="bitem">
+                                @csrf @method('PATCH')
+                                <input type="hidden" name="buka" value="1">
+                                <button type="submit"><b>{{ $n->title }}</b><span>{{ \Illuminate\Support\Str::limit($n->message, 90) }}</span><small>{{ $n->created_at?->diffForHumans() }}</small></button>
+                            </form>
+                        @empty
+                            <div class="bempty">Belum ada notifikasi baru.</div>
+                        @endforelse
                         <a class="ball" href="{{ route('notifications.index') }}">Lihat Semua</a>
                     </div>
                 </div>

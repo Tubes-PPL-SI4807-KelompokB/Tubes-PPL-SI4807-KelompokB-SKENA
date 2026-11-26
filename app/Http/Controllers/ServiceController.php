@@ -27,6 +27,7 @@ class ServiceController extends Controller
         $search = trim((string) $request->input('q'));
 
         $services = Service::with('category')
+            ->withExists(['serviceRequests as has_transactions'])
             ->where('provider_id', $userId)
             ->when($filter !== 'semua', fn ($q) => $q->where('status', $filter))
             ->when($search !== '', fn ($q) => $q->where(function ($w) use ($search) {
@@ -101,7 +102,7 @@ class ServiceController extends Controller
         if ($service->hasTransactions()) {
             $service->update(['status' => 'nonaktif']);
 
-            return back()->with('error', "Jasa \"{$service->judul}\" sudah punya request atau pesanan, jadi tidak dihapus. Jasa ini kami nonaktifkan agar tidak tampil di pencarian.");
+            return back()->with('success', "Jasa \"{$service->judul}\" sudah punya request atau pesanan, jadi dinonaktifkan (tidak dihapus). Riwayat pesanannya tetap tercatat.");
         }
 
         $judul = $service->judul;

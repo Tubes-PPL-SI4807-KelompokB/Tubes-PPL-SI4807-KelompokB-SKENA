@@ -30,9 +30,22 @@
                 {{ $notification->created_at->format('d M Y H:i') }}
             </p>
 
+            @if($notification->url)
+                <form action="{{ route('notifications.update', $notification->id) }}"
+                      method="POST" class="mt-3 inline-block mr-2">
+                    @csrf
+                    @method('PATCH')
+                    <input type="hidden" name="buka" value="1">
+                    <button type="submit"
+                        class="border border-solid border-blue-500 text-blue-600 px-4 py-2 rounded">
+                        Lihat Detail
+                    </button>
+                </form>
+            @endif
+
             @if(!$notification->is_read)
                 <form action="{{ route('notifications.update', $notification->id) }}"
-                      method="POST" class="mt-3">
+                      method="POST" class="mt-3 inline-block">
                     @csrf
                     @method('PATCH')
 

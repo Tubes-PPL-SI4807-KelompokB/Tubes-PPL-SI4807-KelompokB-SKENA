@@ -109,7 +109,7 @@ class OrderController extends Controller
         // Muat model lengkap dengan eager loading, lalu kembalikan urutannya.
         $ids = collect($page->items())->groupBy('kind')->map(fn ($g) => $g->pluck('id'));
         $with = ['service:id,judul,provider_id,harga', 'service.provider:id,name', 'seeker:id,name'];
-        $orders = Order::with([...$with, 'serviceRequest:id,tanggal'])->whereIn('id', $ids->get('order', []))->get()->keyBy('id');
+        $orders = Order::with([...$with, 'serviceRequest:id,tanggal', 'payment:id,order_id,status'])->whereIn('id', $ids->get('order', []))->get()->keyBy('id');
         $requests = ServiceRequest::with($with)->whereIn('id', $ids->get('request', []))->get()->keyBy('id');
 
         $page->setCollection(collect($page->items())->map(
@@ -182,7 +182,7 @@ class OrderController extends Controller
                 if ($code !== '') {
                     $new = Voucher::where('code', $code)->lockForUpdate()->first();
                     if (! $new || ! $new->isUsable() || ! $new->redeem()) {
-                        return 'voucher_invalid';
+                        return self::voucherProblem($new, $code);
                     }
                 }
 
@@ -200,10 +200,8 @@ class OrderController extends Controller
             return 'ok';
         });
 
-        if ($result === 'voucher_invalid') {
-            return back()->withInput()->withErrors([
-                'kode_voucher' => 'Kode voucher tidak ditemukan atau sudah kedaluwarsa. Coba kode lain.',
-            ]);
+        if ($result !== 'ok') {
+            return back()->withInput()->withErrors(['kode_voucher' => $result]);
         }
 
         if ($request->input('aksi') === 'terapkan') {
@@ -217,6 +215,21 @@ class OrderController extends Controller
         return redirect()
             ->route('payments.create', ['order_id' => $order->id])
             ->with('success', 'Perubahan pesanan ' . $order->code . ' disimpan. Lanjutkan pembayaran.');
+    }
+
+    /** Pesan spesifik kenapa voucher tidak bisa dipakai (desain p11-2: pesan error + langkah perbaikan). */
+    private static function voucherProblem(?Voucher $voucher, string $code): string
+    {
+        if (! $voucher) {
+            return 'Kode voucher ' . $code . ' tidak ditemukan. Periksa lagi penulisannya.';
+        }
+
+        return match ($voucher->status) {
+            'Kedaluwarsa' => 'Voucher ' . $code . ' sudah kedaluwarsa sejak ' . $voucher->end_date->translatedFormat('j M Y') . '. Coba kode lain.',
+            'Terjadwal'   => 'Voucher ' . $code . ' baru bisa dipakai mulai ' . $voucher->start_date->translatedFormat('j M Y') . '.',
+            'Nonaktif'    => 'Voucher ' . $code . ' sedang tidak aktif. Coba kode lain.',
+            default       => 'Kuota voucher ' . $code . ' sudah habis. Coba kode lain.',
+        };
     }
 
     /**

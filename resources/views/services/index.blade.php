@@ -89,7 +89,7 @@
                             <div class="flex gap-1.5">
                                 <a href="{{ route('services.edit', $s) }}" class="{{ $ibtn }} text-on-surface hover:border-secondary" aria-label="Ubah {{ $s->judul }}"><span class="msr" style="font-size:18px">edit</span></a>
                                 <button type="button" class="{{ $ibtn }} text-[#B91C1C] hover:bg-error-container" aria-label="Hapus {{ $s->judul }}"
-                                        @click="del = @js(['name' => $s->judul, 'url' => route('services.destroy', $s)])"><span class="msr" style="font-size:18px">delete</span></button>
+                                        @click="del = @js(['name' => $s->judul, 'url' => route('services.destroy', $s), 'used' => (bool) $s->has_transactions])"><span class="msr" style="font-size:18px">delete</span></button>
                             </div>
                         </div>
                     </div>
@@ -119,11 +119,13 @@
              class="w-full max-w-[420px] bg-white rounded-3xl p-7 flex flex-col gap-2.5" style="box-shadow:0 20px 35px -8px rgba(63,116,156,0.16)">
             <span class="w-[52px] h-[52px] rounded-full bg-error-container text-[#B91C1C] grid place-items-center"><span class="msr" style="font-size:26px">delete</span></span>
             <h3 id="delSvcTitle" class="mt-2.5 text-[20px] leading-[1.3] font-bold">Hapus jasa "<span x-text="del?.name"></span>"?</h3>
-            <p id="delSvcDesc" class="text-[14px] leading-normal text-on-surface-muted">Jasa akan hilang dari pencarian dan profilmu. Pesanan yang sudah berjalan tetap tercatat.</p>
+            <p id="delSvcDesc" class="text-[14px] leading-normal text-on-surface-muted" x-text="del?.used
+                ? 'Jasa ini sudah punya request atau pesanan, jadi tidak dihapus permanen. Jasa akan dinonaktifkan agar tidak tampil di pencarian, dan riwayat pesanan tetap tercatat.'
+                : 'Jasa akan dihapus dari pencarian dan profilmu. Tindakan ini tidak bisa dibatalkan.'"></p>
             <form method="POST" :action="del?.url" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mt-3.5">
                 @csrf @method('DELETE')
                 <button type="button" class="h-[46px] rounded-full border border-border bg-white text-on-surface text-[14px] font-bold" @click="del = null">Batal</button>
-                <button type="submit" class="h-[46px] rounded-full bg-error text-white text-[14px] font-bold" data-loading="Menghapus…">Hapus</button>
+                <button type="submit" class="h-[46px] rounded-full bg-error text-white text-[14px] font-bold" data-loading="Memproses…" x-text="del?.used ? 'Nonaktifkan Jasa' : 'Hapus Jasa'">Hapus</button>
             </form>
         </div>
     </div>

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Konfirmasi Pembayaran | SKENA')
+@section('title', 'Detail Pembayaran | SKENA')
 
 @section('content')
 @php
@@ -20,7 +20,7 @@
 
 <div class="pt-2 pb-8">
     <div class="text-label-sm text-primary tracking-widest uppercase">
-        KONFIRMASI PEMBAYARAN · {{ $orderCode }}
+        {{ $canConfirm ? 'KONFIRMASI PEMBAYARAN' : 'STATUS PEMBAYARAN' }} · {{ $orderCode }}
     </div>
     <div class="flex items-center gap-[14px] mt-[10px]">
         <h1 class="m-0 text-headline-lg">Pembayaran</h1>
@@ -180,7 +180,11 @@
                 </span>
                 <h2 class="mt-2 text-headline-md m-0">Menunggu Konfirmasi</h2>
                 <p class="m-0 max-w-[340px] text-body-md text-on-surface-muted">
-                    Bukti transfer sudah diterima. Penyedia jasa akan mengonfirmasi setelah mengecek mutasi rekening.
+                    @if($canConfirm)
+                        Bukti transfer sudah diterima. Cek mutasi rekeningmu, lalu konfirmasi bila dana sudah masuk.
+                    @else
+                        Bukti transfer sudah diterima. Penyedia jasa akan mengonfirmasi setelah mengecek mutasi rekening.
+                    @endif
                 </p>
                 <span class="inline-flex items-center gap-2 h-8 px-[14px] rounded-full font-semibold text-[13px] bg-warning-container text-on-warning-container mt-[6px]">
                     <span class="w-[7px] h-[7px] rounded-full bg-warning"></span>

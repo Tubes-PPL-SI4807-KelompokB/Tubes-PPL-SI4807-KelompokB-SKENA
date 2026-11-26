@@ -1,0 +1,6 @@
+@extends('errors.layout')
+@section('title', 'Akses ditolak')
+@section('code', '403')
+@section('icon', 'lock')
+@section('heading', 'Kamu tidak punya akses ke halaman ini')
+@section('message', ($exception?->getMessage() && ! str_contains($exception->getMessage(), 'This action')) ? $exception->getMessage() : 'Halaman ini hanya untuk pengguna yang berwenang. Kembali ke halaman sebelumnya atau buka beranda.')

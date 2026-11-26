@@ -6,11 +6,14 @@ use App\Http\Requests\PaymentRequest;
 use App\Models\Order;
 use App\Models\Payment;
 use App\Models\User;
+use App\Services\NotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class PaymentController extends Controller
 {
+    public function __construct(private NotificationService $notifier) {}
+
     public function index(Request $request)
     {
         $user   = auth()->user();
@@ -33,6 +36,8 @@ class PaymentController extends Controller
             ]);
         } elseif ($filter === 'lunas') {
             $query->where('status', Payment::STATUS_LUNAS);
+        } elseif ($filter === 'ditolak') {
+            $query->where('status', Payment::STATUS_DITOLAK);
         }
 
         if ($search = $request->input('search')) {
@@ -52,12 +57,12 @@ class PaymentController extends Controller
     public function create(Request $request)
     {
         $user    = auth()->user();
-        $orderId = (int) $request->input('order_id', 1);
-        $order   = Order::with('service')->find($orderId);
+        // Halaman bayar hanya untuk pesanan yang benar-benar ada (PBI-11).
+        $order = Order::with(['service', 'voucher', 'payment'])->find((int) $request->input('order_id'));
 
         if (!$order) {
-            $order = new Order();
-            $order->id = $orderId;
+            return redirect()->route('orders.index', ['peran' => 'pencari'])
+                ->with('error', 'Pesanan tidak ditemukan. Pilih pesanan yang ingin dibayar dari daftar Pesanan.');
         }
 
         // Penyedia jasa tidak dapat membayar layanannya sendiri
@@ -83,8 +88,7 @@ class PaymentController extends Controller
     public function store(PaymentRequest $request)
     {
         $user    = auth()->user();
-        $orderId = (int) $request->validated()['order_id'];
-        $order   = Order::with('service')->firstOrCreate(['id' => $orderId]);
+        $order = Order::with('service')->findOrFail((int) $request->validated()['order_id']);
 
         // Penyedia jasa tidak dapat membayar layanannya sendiri
         if ($order->service && (int)$order->service->user_id === (int)$user->id && !$user->isAdmin()) {
@@ -111,7 +115,7 @@ class PaymentController extends Controller
             $payeeId   = $otherUser?->id ?? $user->id;
         }
 
-        Payment::updateOrCreate(
+        $payment = Payment::updateOrCreate(
             ['order_id' => $order->id],
             [
                 'payer_id'            => $user->id,
@@ -126,6 +130,17 @@ class PaymentController extends Controller
                 'confirmed_at'        => null,
             ]
         );
+
+        // PBI-17: beri tahu penyedia jasa bahwa ada bukti yang perlu dicek.
+        if ((int) $payeeId !== (int) $user->id) {
+            $this->notifier->send(
+                (int) $payeeId,
+                'pembayaran_masuk',
+                'Bukti pembayaran baru',
+                $user->name . ' mengirim bukti pembayaran ' . $order->code . ' sebesar Rp' . number_format($amount, 0, ',', '.') . '. Cek lalu konfirmasi.',
+                ['payment_id' => $payment->id, 'order_id' => $order->id]
+            );
+        }
 
         return redirect()->route('payments.index')
             ->with('success', 'Bukti pembayaran berhasil dikirim. Menunggu konfirmasi penyedia jasa.');
@@ -171,6 +186,14 @@ class PaymentController extends Controller
                 'confirmed_at' => now(),
             ]);
 
+            $this->notifier->send(
+                $payment->payer_id,
+                'pembayaran_lunas',
+                'Pembayaran dikonfirmasi',
+                'Pembayaran ' . $payment->order->code . ' sudah dikonfirmasi lunas oleh penyedia jasa.',
+                ['payment_id' => $payment->id, 'order_id' => $payment->order_id]
+            );
+
             return redirect()->route('payments.show', $payment)
                 ->with('success', 'Pembayaran berhasil dikonfirmasi. Pesanan dinyatakan lunas.');
         }
@@ -187,8 +210,17 @@ class PaymentController extends Controller
                 'rejection_note' => $request->input('rejection_note'),
             ]);
 
+            $note = trim((string) $request->input('rejection_note'));
+            $this->notifier->send(
+                $payment->payer_id,
+                'pembayaran_ditolak',
+                'Bukti pembayaran ditolak',
+                'Bukti pembayaran ' . $payment->order->code . ' ditolak' . ($note !== '' ? '. Alasan: ' . $note : '') . '. Unggah ulang bukti yang sesuai.',
+                ['payment_id' => $payment->id, 'order_id' => $payment->order_id]
+            );
+
             return redirect()->route('payments.show', $payment)
-                ->with('error', 'Bukti pembayaran ditolak. Pencari jasa dapat mengunggah ulang.');
+                ->with('success', 'Bukti pembayaran ditolak. Pencari jasa sudah diberi tahu dan dapat mengunggah ulang.');
         }
 
         return back()->with('error', 'Aksi tidak valid.');

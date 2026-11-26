@@ -123,6 +123,27 @@
                         <h2 class="text-[18px] leading-[1.28] font-semibold">{{ $title }}</h2>
                         <div class="mt-1 text-[14px] leading-[1.4] text-on-surface-muted">{{ $isProv ? 'Pencari' : 'Penyedia' }}: {{ $who }}</div>
                     </div>
+                    @if(! $isOrder && $item->isPending())
+                        {{-- Isi permintaan agar penyedia bisa memutuskan sebelum Terima/Tolak --}}
+                        <div class="px-3.5 py-3 rounded-[18px] bg-surface text-[13px] leading-normal text-on-surface-variant [overflow-wrap:anywhere] flex flex-col gap-1">
+                            <div><span class="font-semibold text-on-surface">Kebutuhan:</span> {{ \Illuminate\Support\Str::limit($item->kebutuhan, 160) }}</div>
+                            <div><span class="font-semibold text-on-surface">Dibutuhkan:</span> {{ $tgl($item->tanggal) }}</div>
+                            @if($item->catatan)<div><span class="font-semibold text-on-surface">Catatan:</span> {{ \Illuminate\Support\Str::limit($item->catatan, 100) }}</div>@endif
+                        </div>
+                    @endif
+                    @if($isOrder && in_array($item->status, [Order::DIKERJAKAN, Order::REVISI], true))
+                        @php
+                            [$payLabel, $payCls] = match ($item->payment?->status) {
+                                \App\Models\Payment::STATUS_LUNAS               => ['Sudah dibayar (Lunas)', 'bg-success-container text-on-success-container'],
+                                \App\Models\Payment::STATUS_MENUNGGU_KONFIRMASI => ['Pembayaran menunggu konfirmasi', 'bg-tint text-[#346284]'],
+                                \App\Models\Payment::STATUS_DITOLAK             => ['Bukti bayar ditolak — unggah ulang', 'bg-error-container text-on-error-container'],
+                                default                                          => ['Belum dibayar', 'bg-[#FEF3C7] text-[#B45309]'],
+                            };
+                        @endphp
+                        <div class="self-start h-7 px-3 rounded-full inline-flex items-center gap-1.5 text-[12px] font-semibold {{ $payCls }}">
+                            <span class="msr" style="font-size:16px">payments</span>{{ $payLabel }}
+                        </div>
+                    @endif
                     @if(! $isOrder && $item->status === ServiceRequest::REJECTED && $item->alasan_penolakan)
                         <div class="px-3.5 py-3 rounded-[18px] bg-surface text-[13px] leading-normal text-on-surface-variant [overflow-wrap:anywhere]">
                             <span class="font-semibold text-on-surface">Alasan:</span> {{ \Illuminate\Support\Str::limit($item->alasan_penolakan, 140) }}

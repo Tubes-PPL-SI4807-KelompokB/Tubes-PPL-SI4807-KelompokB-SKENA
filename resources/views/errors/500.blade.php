@@ -1,0 +1,6 @@
+@extends('errors.layout')
+@section('title', 'Terjadi kendala')
+@section('code', '500')
+@section('icon', 'error')
+@section('heading', 'Terjadi kendala di server')
+@section('message', 'Maaf, permintaanmu belum bisa diproses. Coba muat ulang halaman beberapa saat lagi.')

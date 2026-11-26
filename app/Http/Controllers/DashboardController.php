@@ -87,7 +87,8 @@ class DashboardController extends Controller
             ['star', 'Ulasan & Rating', 'Pilih dari yang terpercaya'],
         ];
 
-        $categories = ['Semua', 'Desain', 'Tutor', 'Video', 'Web', 'Dokumen'];
+        // Chip kategori memakai slug filter yang sama dengan halaman Jelajahi (FR-25).
+        $categories = ['' => 'Semua'] + SearchController::CATEGORIES;
 
         return view('dashboard.index', compact('user', 'initialMode', 'modes', 'services', 'orders', 'features', 'categories'));
     }

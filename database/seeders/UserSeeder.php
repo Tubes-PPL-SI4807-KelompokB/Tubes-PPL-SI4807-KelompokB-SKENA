@@ -95,24 +95,30 @@ class UserSeeder extends Seeder
             ]
         );
 
-        // 4. Akun Client / Pemberi Kerja - Rizal
+        // 4. Akun Klien (pencari jasa) Mahasiswa Terverifikasi - Rizal
+        //    Batasan proyek: hanya mahasiswa terverifikasi yang boleh bertransaksi.
         $client = User::updateOrCreate(
-            ['email' => 'rizal@kreatifstudio.com'],
+            ['email' => 'rizal@student.telkomuniversity.ac.id'],
             [
                 'role_id' => $clientRole?->id,
                 'name' => 'Rizal Kurniawan',
                 'password' => Hash::make('password123'),
                 'phone' => '081399887766',
                 'status' => 'active',
-                'student_verification_status' => 'unverified',
+                'student_verification_status' => 'verified',
+                'nim' => '1202210003',
+                'university' => 'Telkom University',
+                'faculty' => 'Fakultas Ekonomi dan Bisnis',
+                'major' => 'Manajemen Bisnis',
+                'verified_at' => now(),
             ]
         );
         Profile::updateOrCreate(
             ['user_id' => $client->id],
             [
-                'headline' => 'Creative Director @ Studio Nusa Kreasi',
-                'bio' => 'Mencari talenta mahasiswa bertalenta untuk kolaborasi proyek branding dan campaign digital.',
-                'city' => 'Jakarta Selatan',
+                'headline' => 'Mahasiswa Manajemen Bisnis · Pengurus UKM Kewirausahaan',
+                'bio' => 'Sering mencari bantuan desain, video, dan olah data untuk kegiatan UKM.',
+                'city' => 'Bandung',
             ]
         );
     }
