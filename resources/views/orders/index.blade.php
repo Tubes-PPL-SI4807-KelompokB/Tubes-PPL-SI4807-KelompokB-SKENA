@@ -160,6 +160,11 @@
                             </a>
                         @endif
                     </div>
+                    @if($isOrder && ! $isProv && in_array($item->status, [Order::DIKERJAKAN, Order::REVISI], true)
+                        && in_array($item->payment?->status, [null, \App\Models\Payment::STATUS_MENUNGGU_PEMBAYARAN, \App\Models\Payment::STATUS_DITOLAK], true))
+                        <a href="{{ route('orders.show', $item) }}" class="h-11 rounded-full bg-primary hover:bg-primary-hover text-white flex items-center justify-center gap-1.5 text-[14px] font-bold"
+                           aria-label="Bayar pesanan {{ $code }} — {{ $title }}"><span class="msr" style="font-size:18px">payments</span>{{ $item->payment?->status === \App\Models\Payment::STATUS_DITOLAK ? 'Unggah Ulang Bukti' : 'Bayar Sekarang' }}</a>
+                    @endif
                     @if(! $isOrder && $isProv && $item->isPending())
                         <div class="grid grid-cols-2 gap-2.5">
                             <form method="POST" action="{{ route('requests.accept', $item->id) }}">

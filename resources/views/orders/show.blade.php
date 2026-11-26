@@ -25,7 +25,7 @@
         <div class="text-[11px] leading-[1.2] font-bold tracking-[0.06em] text-primary">DETAIL PESANAN · {{ $order->code }}</div>
         <h1 class="mt-2.5 text-[26px] sm:text-[32px] leading-[1.15] tracking-[-0.02em] font-bold">Manajemen Pesanan</h1>
         <p class="mt-2.5 text-[15px] leading-normal text-on-surface-muted">
-            {{ $editable ? 'Ubah catatan atau terapkan voucher sebelum pembayaran.' : 'Rincian pesanan dan ringkasan biaya.' }}
+            {{ $editable ? 'Ubah catatan atau terapkan voucher, lalu lanjutkan ke pembayaran.' : 'Rincian pesanan dan ringkasan biaya.' }}
         </p>
     </div>
 
@@ -135,15 +135,33 @@
                 </div>
             </div>
 
-            @if($order->payment)
-                <p class="text-[13px] text-on-surface-muted">Status pembayaran: <span class="font-semibold text-on-surface">{{ \Illuminate\Support\Str::headline($order->payment->status) }}</span></p>
+            @php
+                $isSeeker  = $order->isSeeker(auth()->user());
+                $payStatus = $order->payment?->status;
+                $unpaid    = in_array($order->status, [\App\Models\Order::DIKERJAKAN, \App\Models\Order::REVISI], true)
+                    && (! $payStatus || in_array($payStatus, [\App\Models\Payment::STATUS_MENUNGGU_PEMBAYARAN, \App\Models\Payment::STATUS_DITOLAK], true));
+            @endphp
+
+            {{-- Status pembayaran (PBI-13) dijelaskan sesuai peran yang melihat --}}
+            @if($unpaid && $isSeeker)
+                <div class="flex gap-3 items-start px-4 py-3.5 rounded-[18px] bg-[#FEF3C7] text-[#B45309] text-[14px] leading-normal font-semibold" role="status">
+                    <span class="msr" style="font-size:20px">payments</span>
+                    <span>{{ $payStatus === \App\Models\Payment::STATUS_DITOLAK ? 'Bukti bayar sebelumnya ditolak. Unggah ulang bukti transfer yang sesuai.' : 'Pesanan ini belum dibayar. Terapkan voucher bila ada, lalu klik Lanjut ke Pembayaran.' }}</span>
+                </div>
+            @elseif($unpaid)
+                <div class="flex gap-3 items-start px-4 py-3.5 rounded-[18px] bg-tint text-[#346284] text-[14px] leading-normal font-semibold" role="status">
+                    <span class="msr" style="font-size:20px">hourglass_top</span>
+                    <span>Menunggu pembayaran dari {{ $order->seeker?->name ?? 'pencari jasa' }}. Kamu akan mendapat notifikasi saat bukti transfer dikirim.</span>
+                </div>
+            @elseif($order->payment)
+                <p class="text-[13px] text-on-surface-muted">Status pembayaran: <span class="font-semibold text-on-surface">{{ $order->payment->statusLabel() }}</span></p>
             @endif
 
             <div class="grid grid-cols-1 sm:grid-cols-[1fr_1.4fr] gap-2.5 mt-1">
                 <a href="{{ route('orders.index') }}" class="h-12 rounded-full border border-border bg-white text-on-surface flex items-center justify-center text-[14px] font-bold">Kembali</a>
                 @if($editable)
-                    <button type="submit" name="aksi" value="simpan" class="h-12 rounded-full bg-primary hover:bg-primary-hover text-white text-[14px] font-bold" data-loading="Menyimpan…">Simpan Perubahan</button>
-                @elseif($order->payment && $order->isSeeker(auth()->user()))
+                    <button type="submit" name="aksi" value="simpan" class="h-12 rounded-full bg-primary hover:bg-primary-hover text-white text-[14px] font-bold inline-flex items-center justify-center gap-1.5" data-loading="Menyimpan…"><span class="msr" style="font-size:18px">payments</span>Lanjut ke Pembayaran</button>
+                @elseif($order->payment && ($isSeeker || $order->isProvider(auth()->user())))
                     <a href="{{ route('payments.show', $order->payment) }}" class="h-12 rounded-full bg-primary hover:bg-primary-hover text-white flex items-center justify-center text-[14px] font-bold">Lihat Pembayaran</a>
                 @endif
             </div>

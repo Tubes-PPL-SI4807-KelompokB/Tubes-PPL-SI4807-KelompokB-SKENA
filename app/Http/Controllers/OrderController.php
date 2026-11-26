@@ -274,7 +274,7 @@ class OrderController extends Controller
             $serviceRequest->seeker_id,
             'request_diterima',
             'Request jasa diterima',
-            'Request untuk "' . $serviceRequest->service->judul . '" diterima. Pesanan ' . $order->code . ' sedang dikerjakan.',
+            'Request untuk "' . $serviceRequest->service->judul . '" diterima menjadi pesanan ' . $order->code . '. Lakukan pembayaran agar pesanan diproses.',
             ['order_id' => $order->id]
         );
 

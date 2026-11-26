@@ -159,7 +159,24 @@ class Sprint1AlurTransaksiTest extends TestCase
 
         $order = $this->acceptedOrder();
         $this->actingAs($this->seeker)->get(route('orders.index', ['peran' => 'pencari']))
-            ->assertSee($order->code)->assertSee('Belum dibayar');
+            ->assertSee($order->code)->assertSee('Belum dibayar')->assertSee('Bayar Sekarang');
+    }
+
+    #[Test]
+    public function detail_pesanan_menjelaskan_siapa_yang_membayar(): void
+    {
+        $order = $this->acceptedOrder();
+
+        $this->actingAs($this->seeker)->get(route('orders.show', $order))
+            ->assertSee('Pesanan ini belum dibayar')->assertSee('Lanjut ke Pembayaran');
+
+        $this->actingAs($this->provider)->get(route('orders.show', $order))
+            ->assertSee('Menunggu pembayaran dari Rara Anindya')->assertDontSee('Lanjut ke Pembayaran');
+
+        // Setelah bukti dikirim, kedua pihak bisa membuka halaman pembayaran.
+        $payment = $this->uploadProof($order);
+        $this->actingAs($this->provider)->get(route('orders.show', $order))
+            ->assertSee(route('payments.show', $payment), false)->assertDontSee('Menunggu pembayaran dari');
     }
 
     #[Test]

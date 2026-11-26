@@ -244,14 +244,14 @@ class OrderTest extends TestCase
             ->assertOk()->assertSee('Desain PPT Presentasi')->assertSee($order->code)->assertSee('Dikerjakan');
 
         $this->actingAs($this->seeker)->get(route('orders.show', $order))
-            ->assertOk()->assertSee('DETAIL PESANAN')->assertSee('Simpan Perubahan');
+            ->assertOk()->assertSee('DETAIL PESANAN')->assertSee('Lanjut ke Pembayaran');
 
         $this->actingAs($this->provider)->get(route('orders.index', ['peran' => 'penyedia']))
             ->assertOk()->assertSee('Desain PPT Presentasi');
 
         // Penyedia hanya melihat (tidak bisa mengubah catatan/voucher).
         $this->actingAs($this->provider)->get(route('orders.show', $order))
-            ->assertOk()->assertSee('DETAIL PESANAN')->assertDontSee('Simpan Perubahan');
+            ->assertOk()->assertSee('DETAIL PESANAN')->assertDontSee('Lanjut ke Pembayaran');
     }
 
     #[Test]
@@ -281,7 +281,7 @@ class OrderTest extends TestCase
         $this->assertSame('Tema biru tua.', $order->catatan);
         $this->assertSame(1, $voucher->fresh()->used_count);
 
-        // Simpan Perubahan lanjut ke halaman pembayaran PBI-13.
+        // Lanjut ke Pembayaran lanjut ke halaman pembayaran PBI-13.
         $this->actingAs($this->seeker)
             ->patch(route('orders.update', $order), ['catatan' => 'Tema biru tua.', 'kode_voucher' => 'MAHASISWA10', 'aksi' => 'simpan'])
             ->assertRedirect(route('payments.create', ['order_id' => $order->id]));
