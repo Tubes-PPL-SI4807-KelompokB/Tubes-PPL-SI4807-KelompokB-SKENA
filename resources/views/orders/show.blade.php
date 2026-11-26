@@ -1,285 +1,152 @@
 @extends('layouts.app')
-@section('title', 'Detail Pesanan — SKENA')
+@section('title', 'Detail Pesanan ' . $order->code . ' — SKENA')
+
+{{--
+    PBI-11 p11-2 Detail & Ubah Pesanan — pencari dapat mengubah catatan dan menerapkan
+    voucher (PBI-09) sebelum pembayaran (PBI-13). Penyedia & admin melihat versi baca saja.
+--}}
+
+@php
+    $rp   = fn ($n) => 'Rp' . number_format((float) $n, 0, ',', '.');
+    [$bg, $fg, $dot] = $order->status_tone;
+    $initials = fn (?string $name) => collect(preg_split('/\s+/', trim((string) $name)))->filter()->take(2)->map(fn ($w) => mb_strtoupper(mb_substr($w, 0, 1)))->implode('') ?: '?';
+    $meta = fn ($u) => trim(($u?->major ?? '') . ' ' . ($u?->angkatan ?? '')) ?: 'Mahasiswa SKENA';
+    $people = [
+        'PENYEDIA' => $order->service?->provider,
+        'PENCARI'  => $order->seeker,
+    ];
+    $voucherCode = old('kode_voucher', $order->voucher?->code);
+    $voucherErr  = $errors->has('kode_voucher');
+@endphp
 
 @section('content')
-<div class="container mx-auto px-4 py-6">
-
-    @php
-        $statusLabels = [
-            'pending' => 'Menunggu',
-            'in_progress' => 'Sedang Diproses',
-            'completed' => 'Selesai',
-            'cancelled' => 'Dibatalkan',
-        ];
-
-        $statusColors = [
-            'pending' => 'bg-yellow-100 text-yellow-800',
-            'in_progress' => 'bg-blue-100 text-blue-800',
-            'completed' => 'bg-green-100 text-green-800',
-            'cancelled' => 'bg-red-100 text-red-800',
-        ];
-
-        $statusLabel = $statusLabels[$order->status]
-            ?? ucfirst(str_replace('_', ' ', $order->status));
-
-        $statusColor = $statusColors[$order->status]
-            ?? 'bg-gray-100 text-gray-700';
-
-        $user = auth()->user();
-
-        $isSeeker = (int) $order->seeker_id === (int) $user->id;
-        $isProvider = (int) $order->service->provider_id === (int) $user->id;
-    @endphp
-
-    {{-- Tombol kembali --}}
-    <div class="mb-6">
-        <a
-            href="{{ route('orders.index') }}"
-            class="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline"
-        >
-            ← Kembali ke Daftar Pesanan
-        </a>
+    {{-- Judul --}}
+    <div class="pt-2 pb-8">
+        <div class="text-[11px] leading-[1.2] font-bold tracking-[0.06em] text-primary">DETAIL PESANAN · {{ $order->code }}</div>
+        <h1 class="mt-2.5 text-[26px] sm:text-[32px] leading-[1.15] tracking-[-0.02em] font-bold">Manajemen Pesanan</h1>
+        <p class="mt-2.5 text-[15px] leading-normal text-on-surface-muted">
+            {{ $editable ? 'Ubah catatan atau terapkan voucher sebelum pembayaran.' : 'Rincian pesanan dan ringkasan biaya.' }}
+        </p>
     </div>
 
-    {{-- Header --}}
-    <div class="mb-8">
-        <div class="text-sm font-bold tracking-wide text-primary">
-            MANAJEMEN TRANSAKSI
-        </div>
+    <form method="POST" action="{{ route('orders.update', $order) }}" class="grid grid-cols-1 lg:grid-cols-2 gap-[18px] items-start">
+        @csrf @method('PATCH')
 
-        <div class="mt-2 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-
-            <div>
-                <h1 class="text-2xl sm:text-3xl font-bold">
-                    Detail Pesanan
-                </h1>
-
-                <p class="mt-1 text-sm text-on-surface-muted">
-                    Nomor Pesanan: #{{ $order->id }}
-                </p>
-            </div>
-
-            <span class="inline-flex w-fit rounded-full px-4 py-2 text-sm font-semibold {{ $statusColor }}">
-                {{ $statusLabel }}
-            </span>
-
-        </div>
-    </div>
-
-    {{-- Informasi jasa --}}
-    <div class="mb-6 rounded-2xl border border-border bg-white p-5 sm:p-6 shadow-sm">
-
-        <h2 class="text-lg font-bold mb-5">
-            Informasi Jasa
-        </h2>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-
-            <div>
-                <p class="text-sm text-on-surface-muted">
-                    Nama Jasa
-                </p>
-
-                <p class="mt-1 font-semibold">
-                    {{ $order->service->judul ?? 'Jasa tidak tersedia' }}
-                </p>
-            </div>
-
-            <div>
-                <p class="text-sm text-on-surface-muted">
-                    Penyedia Jasa
-                </p>
-
-                <p class="mt-1 font-semibold">
-                    {{ $order->service->provider->name ?? '-' }}
-                </p>
-            </div>
-
-            <div>
-                <p class="text-sm text-on-surface-muted">
-                    Harga Awal Jasa
-                </p>
-
-                <p class="mt-1 font-semibold">
-                    Rp{{ number_format((float) ($order->service->harga ?? 0), 0, ',', '.') }}
-                </p>
-            </div>
-
-            <div>
-                <p class="text-sm text-on-surface-muted">
-                    Harga Akhir Pesanan
-                </p>
-
-                <p class="mt-1 font-semibold text-primary">
-                    @if($order->harga_final !== null)
-                        Rp{{ number_format((float) $order->harga_final, 0, ',', '.') }}
-                    @else
-                        Belum ditentukan
+        {{-- Kartu kiri: jasa, pihak terlibat, catatan --}}
+        <section class="bg-white border border-border rounded-3xl shadow-card p-6 sm:p-8 flex flex-col gap-[22px]" aria-labelledby="orderSvc">
+            <div class="flex flex-wrap gap-[18px] items-center">
+                <div class="w-[120px] h-[84px] flex-none rounded-[18px] grid place-items-center text-primary" style="background:repeating-linear-gradient(135deg,#E3ECF4 0 8px,#EDF3F8 8px 16px)" aria-hidden="true">
+                    <span class="msr" style="font-size:32px">design_services</span>
+                </div>
+                <div class="min-w-0">
+                    @if($order->service?->category)
+                        <span class="h-6 px-2.5 rounded-full bg-tint text-[#346284] text-[13px] leading-6 inline-block">{{ $order->service->category->nama_kategori }}</span>
                     @endif
-                </p>
-            </div>
-
-        </div>
-    </div>
-
-    {{-- Informasi pihak terkait --}}
-    <div class="mb-6 rounded-2xl border border-border bg-white p-5 sm:p-6 shadow-sm">
-
-        <h2 class="text-lg font-bold mb-5">
-            Pihak yang Terlibat
-        </h2>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-
-            <div class="rounded-xl bg-surface p-4">
-                <p class="text-sm text-on-surface-muted">
-                    Pencari Jasa
-                </p>
-
-                <p class="mt-1 font-semibold">
-                    {{ $order->buyer->name ?? '-' }}
-                </p>
-
-                @if($isSeeker)
-                    <span class="mt-2 inline-block text-xs font-semibold text-primary">
-                        Akun kamu
-                    </span>
-                @endif
-            </div>
-
-            <div class="rounded-xl bg-surface p-4">
-                <p class="text-sm text-on-surface-muted">
-                    Penyedia Jasa
-                </p>
-
-                <p class="mt-1 font-semibold">
-                    {{ $order->service->provider->name ?? '-' }}
-                </p>
-
-                @if($isProvider)
-                    <span class="mt-2 inline-block text-xs font-semibold text-primary">
-                        Akun kamu
-                    </span>
-                @endif
-            </div>
-
-        </div>
-    </div>
-
-    {{-- Informasi request awal --}}
-    <div class="mb-6 rounded-2xl border border-border bg-white p-5 sm:p-6 shadow-sm">
-
-        <h2 class="text-lg font-bold mb-5">
-            Informasi Request Jasa
-        </h2>
-
-        @if($order->serviceRequest)
-
-            <div class="space-y-4">
-
-                <div>
-                    <p class="text-sm font-semibold">
-                        Kebutuhan
-                    </p>
-
-                    <p class="mt-1 text-sm leading-relaxed text-on-surface-muted whitespace-pre-line">
-                        {{ $order->serviceRequest->kebutuhan }}
-                    </p>
-                </div>
-
-                <div>
-                    <p class="text-sm font-semibold">
-                        Tanggal Dibutuhkan
-                    </p>
-
-                    <p class="mt-1 text-sm text-on-surface-muted">
-                        {{ $order->serviceRequest->tanggal?->format('d F Y') ?? '-' }}
-                    </p>
-                </div>
-
-                @if($order->serviceRequest->catatan)
-                    <div>
-                        <p class="text-sm font-semibold">
-                            Catatan Tambahan
-                        </p>
-
-                        <p class="mt-1 text-sm text-on-surface-muted whitespace-pre-line">
-                            {{ $order->serviceRequest->catatan }}
-                        </p>
+                    <h2 id="orderSvc" class="mt-2 text-[18px] leading-[1.28] font-semibold">{{ $order->service?->judul ?? 'Jasa sudah dihapus' }}</h2>
+                    <div class="flex flex-wrap items-center gap-2 mt-1.5">
+                        <span class="h-7 px-3 rounded-full inline-flex items-center gap-1.5 text-[12px] font-semibold" style="background:{{ $bg }};color:{{ $fg }}">
+                            <span class="w-1.5 h-1.5 rounded-full" style="background:{{ $dot }}"></span>{{ $order->status_label }}
+                        </span>
+                        @if($order->serviceRequest?->tanggal)
+                            <span class="text-[13px] text-on-surface-muted">Tenggat {{ $order->serviceRequest->tanggal->translatedFormat('j M Y') }}</span>
+                        @endif
                     </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-[18px]">
+                @foreach($people as $role => $person)
+                    <div class="p-4 rounded-[18px] bg-surface">
+                        <div class="text-[11px] leading-[1.2] font-bold tracking-[0.06em] text-on-surface-muted">{{ $role }}</div>
+                        <div class="flex gap-2.5 items-center mt-2.5">
+                            <span class="w-9 h-9 flex-none rounded-full bg-tint text-primary grid place-items-center text-[13px] font-bold" aria-hidden="true">{{ $initials($person?->name) }}</span>
+                            <div class="min-w-0">
+                                <div class="text-[14px] leading-[1.3] font-semibold truncate">{{ $person?->name ?? 'Pengguna SKENA' }}</div>
+                                <div class="text-[12px] leading-[1.4] text-on-surface-muted truncate">{{ $meta($person) }}</div>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+
+            @if($order->serviceRequest?->kebutuhan)
+                <div>
+                    <div class="text-[14px] font-semibold">Kebutuhan</div>
+                    <p class="mt-1.5 text-[14px] leading-normal text-on-surface-variant whitespace-pre-line [overflow-wrap:anywhere]">{{ $order->serviceRequest->kebutuhan }}</p>
+                </div>
+            @endif
+
+            <div class="flex flex-col gap-2">
+                <label for="catatan" class="text-[14px] font-semibold">Catatan</label>
+                @if($editable)
+                    <textarea id="catatan" name="catatan" rows="3" maxlength="1000"
+                              placeholder="Contoh: 15 slide, tema biru tua, 2 slide diagram alur."
+                              class="px-5 py-3.5 rounded-[20px] border bg-white text-[15px] leading-normal text-on-surface outline-none resize-none focus:border-primary focus:ring-[3px] focus:ring-tint-strong {{ $errors->has('catatan') ? 'border-error' : 'border-border' }}"
+                              @error('catatan') aria-invalid="true" aria-describedby="catatanErr" @enderror>{{ old('catatan', $order->catatan) }}</textarea>
+                    @error('catatan')<p id="catatanErr" class="text-[13px] text-on-error-container">{{ $message }}</p>@enderror
+                @else
+                    <p id="catatan" class="text-[14px] leading-normal text-on-surface-variant whitespace-pre-line [overflow-wrap:anywhere]">{{ $order->catatan ?: 'Tidak ada catatan.' }}</p>
                 @endif
-
             </div>
 
-        @else
+            <div class="flex justify-between items-center pt-[18px] border-t border-border">
+                <span class="text-[15px] text-on-surface-muted">Harga jasa</span>
+                <span class="text-[18px] font-bold">{{ $rp($order->harga_jasa) }}</span>
+            </div>
+        </section>
 
-            <p class="text-sm text-on-surface-muted">
-                Informasi request awal tidak tersedia.
-            </p>
+        {{-- Kartu kanan: ringkasan biaya + voucher --}}
+        <section class="bg-white border border-border rounded-3xl shadow-card p-6 sm:p-8 flex flex-col gap-5" aria-labelledby="costTitle">
+            <h2 id="costTitle" class="text-[18px] leading-[1.28] font-semibold">Ringkasan Biaya</h2>
 
-        @endif
+            @if($editable)
+                <div class="flex flex-col gap-2">
+                    <label for="kodeVoucher" class="text-[14px] font-semibold">Kode Voucher</label>
+                    <div class="flex gap-2.5">
+                        <input id="kodeVoucher" name="kode_voucher" value="{{ $voucherCode }}" maxlength="30" autocomplete="off"
+                               placeholder="Contoh: MAHASISWA10"
+                               class="flex-1 min-w-0 h-12 px-5 rounded-full bg-white font-mono font-bold text-[15px] uppercase text-on-surface outline-none focus:ring-[3px] focus:ring-tint-strong border {{ $voucherErr ? 'border-error' : ($order->voucher_id ? 'border-success' : 'border-border') }}"
+                               aria-describedby="voucherMsg" @if($voucherErr) aria-invalid="true" @endif>
+                        <button type="submit" name="aksi" value="terapkan" formnovalidate
+                                class="h-12 px-6 rounded-full bg-tint text-primary hover:bg-primary hover:text-white text-[14px] font-bold transition-colors" data-loading="Menerapkan…">Terapkan</button>
+                    </div>
+                    <p id="voucherMsg" class="text-[13px] leading-[1.45] {{ $voucherErr ? 'text-on-error-container' : 'text-on-success-container' }}" aria-live="polite">
+                        @if($voucherErr)
+                            {{ $errors->first('kode_voucher') }}
+                        @elseif(session('voucher_msg'))
+                            {{ session('voucher_msg') }}
+                        @elseif($order->voucher_id)
+                            Voucher {{ $order->voucher->code }} diterapkan, hemat {{ $rp($order->voucher_discount) }}.
+                        @endif
+                    </p>
+                </div>
+            @endif
 
-    </div>
-
-    {{-- Informasi pesanan --}}
-    <div class="rounded-2xl border border-border bg-white p-5 sm:p-6 shadow-sm">
-
-        <h2 class="text-lg font-bold mb-5">
-            Informasi Pesanan
-        </h2>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-
-            <div>
-                <p class="text-sm text-on-surface-muted">
-                    Nomor Pesanan
-                </p>
-
-                <p class="mt-1 font-semibold">
-                    #{{ $order->id }}
-                </p>
+            <div class="flex flex-col gap-3.5 p-5 rounded-[18px] bg-surface">
+                <div class="flex justify-between text-[15px] text-on-surface-variant"><span>Harga jasa</span><span>{{ $rp($order->harga_jasa) }}</span></div>
+                <div class="flex justify-between text-[15px] text-on-success-container">
+                    <span>Potongan voucher @if($order->voucher)({{ $order->voucher->value_label }})@endif</span>
+                    <span>−{{ $rp($order->voucher_discount) }}</span>
+                </div>
+                <div class="h-px bg-border"></div>
+                <div class="flex justify-between items-baseline">
+                    <span class="text-[15px] font-semibold">Total</span>
+                    <span class="text-[28px] sm:text-[32px] leading-none tracking-[-0.02em] font-bold">{{ $rp($order->final_price) }}</span>
+                </div>
             </div>
 
-            <div>
-                <p class="text-sm text-on-surface-muted">
-                    Status Pesanan
-                </p>
+            @if($order->payment)
+                <p class="text-[13px] text-on-surface-muted">Status pembayaran: <span class="font-semibold text-on-surface">{{ \Illuminate\Support\Str::headline($order->payment->status) }}</span></p>
+            @endif
 
-                <p class="mt-1 font-semibold">
-                    {{ $statusLabel }}
-                </p>
+            <div class="grid grid-cols-1 sm:grid-cols-[1fr_1.4fr] gap-2.5 mt-1">
+                <a href="{{ route('orders.index') }}" class="h-12 rounded-full border border-border bg-white text-on-surface flex items-center justify-center text-[14px] font-bold">Kembali</a>
+                @if($editable)
+                    <button type="submit" name="aksi" value="simpan" class="h-12 rounded-full bg-primary hover:bg-primary-hover text-white text-[14px] font-bold" data-loading="Menyimpan…">Simpan Perubahan</button>
+                @elseif($order->payment && $order->isSeeker(auth()->user()))
+                    <a href="{{ route('payments.show', $order->payment) }}" class="h-12 rounded-full bg-primary hover:bg-primary-hover text-white flex items-center justify-center text-[14px] font-bold">Lihat Pembayaran</a>
+                @endif
             </div>
-
-            <div>
-                <p class="text-sm text-on-surface-muted">
-                    Dibuat Pada
-                </p>
-
-                <p class="mt-1 font-semibold">
-                    {{ $order->created_at?->format('d M Y, H:i') ?? '-' }}
-                </p>
-            </div>
-
-            <div>
-                <p class="text-sm text-on-surface-muted">
-                    Terakhir Diperbarui
-                </p>
-
-                <p class="mt-1 font-semibold">
-                    {{ $order->updated_at?->format('d M Y, H:i') ?? '-' }}
-                </p>
-            </div>
-
-        </div>
-
-        <div class="mt-6 rounded-xl bg-blue-50 p-4">
-            <p class="text-sm leading-relaxed text-blue-800">
-                Pesanan ini dibuat setelah request jasa diterima oleh penyedia.
-                Harga akhir dapat ditentukan melalui proses negosiasi.
-            </p>
-        </div>
-
-    </div>
-
-</div>
+        </section>
+    </form>
 @endsection

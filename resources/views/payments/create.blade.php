@@ -21,13 +21,14 @@
 </div>
 
 @php
-    $serviceTitle  = $order->service->title ?? 'Desain PPT Presentasi Sidang';
-    $providerName  = $order->service->user->name ?? ($payment->payee->name ?? 'Penyedia Jasa');
-    $basePrice     = $order->service->price ?? 20000;
-    $voucherCode   = $order->voucher->code ?? 'MAHASISWA10';
-    $voucherDisc   = $order->voucher_discount ?? 2000;
-    $amount        = $order->final_price ?? $order->agreed_price ?? ($basePrice - $voucherDisc);
-    $orderCode     = $order->code ?? '#SKN-' . str_pad($order->id ?: 1, 4, '0', STR_PAD_LEFT);
+    // Data dari pesanan PBI-11 (harga jasa, voucher, total) — lihat App\Models\Order.
+    $serviceTitle  = $order->service->judul ?? 'Jasa SKENA';
+    $providerName  = $order->service->provider->name ?? ($payment->payee->name ?? 'Penyedia Jasa');
+    $basePrice     = $order->exists ? $order->harga_jasa : 0;
+    $voucherCode   = $order->voucher->code ?? null;
+    $voucherDisc   = (int) ($order->voucher_discount ?? 0);
+    $amount        = $order->exists ? $order->final_price : 0;
+    $orderCode     = $order->exists ? $order->code : '#SKN-' . str_pad($order->id ?: 1, 4, '0', STR_PAD_LEFT);
 
     $existingPayment = $payment ?? null;
     $hasProof = $existingPayment && $existingPayment->proof_path;

@@ -25,17 +25,8 @@ class PaymentSeeder extends Seeder
             return;
         }
 
-        if (Order::count() === 0) {
-            for ($k = 1; $k <= 5; $k++) {
-                \Illuminate\Support\Facades\DB::table('orders')->insertOrIgnore([
-                    'id'         => $k,
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ]);
-            }
-        }
-
-        $orders = Order::take(5)->get();
+        // Pesanan dibuat OrderSeeder (PBI-11); pembayar = pencari, penerima = penyedia jasa.
+        $orders = Order::with('service')->orderByDesc('created_at')->take(5)->get();
 
         $rows = [
             [18000, Payment::STATUS_MENUNGGU_KONFIRMASI, 3,  null],
@@ -57,9 +48,9 @@ class PaymentSeeder extends Seeder
             Payment::updateOrCreate(
                 ['order_id' => $order->id],
                 [
-                    'payer_id'            => $payer->id,
-                    'payee_id'            => $payee->id,
-                    'amount'              => $amount,
+                    'payer_id'            => $order->seeker_id ?? $payer->id,
+                    'payee_id'            => $order->service?->provider_id ?? $payee->id,
+                    'amount'              => $order->service ? $order->final_price : $amount,
                     'status'              => $status,
                     'proof_path'          => 'payments/sample-bukti-' . ($i + 1) . '.jpg',
                     'proof_original_name' => 'bukti-transfer-SKN-00' . (640 + $i + 2) . '.jpg',

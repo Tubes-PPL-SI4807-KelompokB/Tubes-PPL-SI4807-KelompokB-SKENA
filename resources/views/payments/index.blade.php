@@ -81,7 +81,7 @@
                  style="grid-template-columns:2.4fr 1fr 1.6fr 1fr 1.5fr 1fr">
                 <div>
                     <a href="{{ route('payments.show', $pay) }}" class="font-semibold text-[14px] leading-snug text-on-surface hover:text-primary transition-colors block">
-                        {{ $pay->order?->service?->title ?? 'Desain PPT Presentasi Sidang' }}
+                        {{ $pay->order?->service?->judul ?? 'Jasa SKENA' }}
                     </a>
                     <div class="text-[12px] text-on-surface-muted mt-0.5">
                         <a href="{{ route('payments.show', $pay) }}" class="text-primary hover:underline font-medium">

@@ -15,7 +15,7 @@
     $orderCode    = $payment->order->code ?? '#SKN-' . str_pad($payment->order_id, 4, '0', STR_PAD_LEFT);
     $payerName    = $payment->payer->name ?? 'Pencari Jasa';
     $payeeName    = $payment->payee->name ?? 'Penyedia Jasa';
-    $serviceTitle = $payment->order?->service?->title ?? 'Desain PPT Presentasi Sidang';
+    $serviceTitle = $payment->order?->service?->judul ?? 'Jasa SKENA';
 @endphp
 
 <div class="pt-2 pb-8">

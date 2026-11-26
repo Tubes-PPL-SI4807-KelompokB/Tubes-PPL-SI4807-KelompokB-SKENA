@@ -15,6 +15,8 @@ class DatabaseSeeder extends Seeder
             SkillSeeder::class,
             ServiceSeeder::class,
             VoucherSeeder::class,
+            ServiceRequestSeeder::class, // PBI-10
+            OrderSeeder::class,          // PBI-11
             PaymentSeeder::class,
         ]);
     }

@@ -93,7 +93,7 @@
                     @if($r->isPending())
                         <div class="grid grid-cols-2 gap-2.5 mt-auto">
                             <a href="{{ route('requests.edit', $r) }}" class="h-11 rounded-full bg-tint text-primary hover:bg-primary hover:text-white flex items-center justify-center text-[14px] font-semibold transition-colors" aria-label="Ubah request {{ $title }}">Ubah</a>
-                            <button type="button" class="h-11 rounded-full border border-border bg-white text-[#B91C1C] hover:bg-error-container text-[14px] font-semibold transition-colors"
+                            <button type="button" class="h-11 rounded-full border border-solid border-border bg-white text-[#B91C1C] hover:bg-error-container text-[14px] font-semibold transition-colors"
                                     aria-label="Batalkan request {{ $title }}"
                                     @click="cancel = @js(['name' => $title, 'prov' => $prov, 'url' => route('requests.destroy', $r)])">Batalkan</button>
                         </div>
@@ -101,7 +101,7 @@
                         <div class="mt-auto text-[13px] leading-[1.45] text-on-surface-muted">
                             @switch($r->status)
                                 @case('accepted') Diterima {{ $tgl($r->updated_at) }} · <a href="{{ route('orders.index') }}" class="font-semibold">lanjut ke Pesanan</a> @break
-                                @case('rejected') Ditolak penyedia pada {{ $tgl($r->updated_at) }} @break
+                                @case('rejected') Ditolak penyedia pada {{ $tgl($r->updated_at) }}@if($r->alasan_penolakan) · Alasan: {{ \Illuminate\Support\Str::limit($r->alasan_penolakan, 120) }}@endif @break
                                 @default Kamu membatalkan pada {{ $tgl($r->updated_at) }}
                             @endswitch
                         </div>
@@ -135,7 +135,7 @@
             <p id="cancelReqDesc" class="text-[14px] leading-normal text-on-surface-muted">Request "<span x-text="cancel?.name"></span>" ke <span x-text="cancel?.prov"></span> akan dibatalkan dan penyedia diberi tahu.</p>
             <form method="POST" :action="cancel?.url" class="grid grid-cols-1 sm:grid-cols-[1fr_1.3fr] gap-2.5 mt-3.5">
                 @csrf @method('DELETE')
-                <button type="button" class="h-[46px] rounded-full border border-border bg-white text-on-surface text-[14px] font-bold" @click="cancel = null">Kembali</button>
+                <button type="button" class="h-[46px] rounded-full border border-solid border-border bg-white text-on-surface text-[14px] font-bold" @click="cancel = null">Kembali</button>
                 <button type="submit" class="h-[46px] rounded-full bg-error text-white text-[14px] font-bold" data-loading="Membatalkan…">Batalkan Request</button>
             </form>
         </div>

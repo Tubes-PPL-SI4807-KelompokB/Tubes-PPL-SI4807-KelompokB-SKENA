@@ -1,4 +1,3 @@
-
 <?php
 
 use Illuminate\Support\Facades\Route;
@@ -78,7 +77,7 @@ Route::middleware('auth')->group(function () {
     Route::post('requests/{id}/reject', [OrderController::class, 'rejectRequest'])
         ->whereNumber('id')
         ->name('requests.reject');
-    Route::resource('orders', OrderController::class)->only(['index', 'show']);                                              // PBI-11
+    Route::resource('orders', OrderController::class)->only(['index', 'show', 'update']);          // PBI-11
     Route::resource('orders.negotiations', NegotiationController::class)->shallow();               // PBI-12
     Route::resource('payments', PaymentController::class)->only(['index', 'create', 'store', 'show', 'update', 'destroy']); // PBI-13
     Route::resource('work-progress', WorkProgressController::class)->only(['index', 'show', 'update']); // PBI-14

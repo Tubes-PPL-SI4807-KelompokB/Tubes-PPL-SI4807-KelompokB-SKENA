@@ -32,6 +32,7 @@ class ServiceRequest extends Model
         'kebutuhan',
         'tanggal',
         'catatan',
+        'alasan_penolakan',
         'status',
     ];
 
