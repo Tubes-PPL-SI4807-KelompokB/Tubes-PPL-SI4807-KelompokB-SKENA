@@ -1,3 +1,4 @@
+
 <?php
 
 use Illuminate\Support\Facades\Route;
@@ -69,7 +70,15 @@ Route::middleware('auth')->group(function () {
     Route::resource('favorites', FavoriteController::class)->only(['index', 'store', 'destroy']);   // PBI-07
     Route::resource('saved-searches', SavedSearchController::class)->only(['index', 'store', 'destroy']); // PBI-08
     Route::resource('requests', ServiceRequestController::class);                                   // PBI-10
-    Route::resource('orders', OrderController::class);                                              // PBI-11
+    Route::get('orders/incoming-requests', [OrderController::class, 'incomingRequests'])
+        ->name('orders.incoming');
+    Route::post('requests/{id}/accept', [OrderController::class, 'acceptRequest'])
+        ->whereNumber('id')
+        ->name('requests.accept');
+    Route::post('requests/{id}/reject', [OrderController::class, 'rejectRequest'])
+        ->whereNumber('id')
+        ->name('requests.reject');
+    Route::resource('orders', OrderController::class)->only(['index', 'show']);                                              // PBI-11
     Route::resource('orders.negotiations', NegotiationController::class)->shallow();               // PBI-12
     Route::resource('payments', PaymentController::class)->only(['index', 'create', 'store', 'show', 'update', 'destroy']); // PBI-13
     Route::resource('work-progress', WorkProgressController::class)->only(['index', 'show', 'update']); // PBI-14

@@ -59,7 +59,15 @@
         @section('drawer-nav')
             @auth
                 {!! $navItem('Beranda', 'home', route('dashboard'), request()->routeIs('dashboard')) !!}
-                {!! $navItem('Pesanan', 'receipt_long', route('orders.index'), request()->routeIs('orders.*')) !!}
+
+                {{-- PBI-11: Menu Pesanan --}}
+                {!! $navItem('Pesanan', 'receipt_long', route('orders.index'), request()->routeIs('orders.index', 'orders.show')) !!}
+
+                {{-- PBI-11: Menu Request Masuk khusus penyedia jasa --}}
+                @if($authUser->isFreelancer())
+                    {!! $navItem('Request Masuk', 'inbox', route('orders.incoming'), request()->routeIs('orders.incoming')) !!}
+                @endif
+
                 {!! $navItem('Chat', 'chat_bubble', route('messages.index'), request()->routeIs('messages.*')) !!}
                 {!! $navItem('Wishlist', 'favorite', route('favorites.index'), request()->routeIs('favorites.*')) !!}
                 {!! $navItem('Jasa Saya', 'storefront', route('services.index'), request()->routeIs('services.*')) !!}
