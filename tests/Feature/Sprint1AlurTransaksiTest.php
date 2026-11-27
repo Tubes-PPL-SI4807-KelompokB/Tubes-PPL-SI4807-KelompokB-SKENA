@@ -196,54 +196,7 @@ class Sprint1AlurTransaksiTest extends TestCase
             ->assertSessionHasErrors(['kode_voucher' => 'Kode voucher NGASAL tidak ditemukan. Periksa lagi penulisannya.']);
     }
 
-    // ── Pembayaran + notifikasi (PBI-13, PBI-17) ─────────────
-
-    #[Test]
-    public function halaman_bayar_pesanan_yang_tidak_ada_diarahkan_ke_daftar_pesanan(): void
-    {
-        $this->actingAs($this->seeker)->get(route('payments.create', ['order_id' => 999]))
-            ->assertRedirect(route('orders.index', ['peran' => 'pencari']))->assertSessionHas('error');
-        $this->actingAs($this->seeker)->get(route('payments.create'))
-            ->assertRedirect(route('orders.index', ['peran' => 'pencari']));
-    }
-
-    #[Test]
-    public function unggah_tolak_dan_konfirmasi_bukti_mengirim_notifikasi(): void
-    {
-        $order   = $this->acceptedOrder();
-        $payment = $this->uploadProof($order);
-
-        $this->assertSame(Payment::STATUS_MENUNGGU_KONFIRMASI, $payment->status);
-        $this->assertDatabaseHas('notifications', ['user_id' => $this->provider->id, 'type' => 'pembayaran_masuk']);
-
-        $this->actingAs($this->provider)
-            ->patch(route('payments.update', $payment), ['action' => 'reject', 'rejection_note' => 'Nominal belum masuk.'])
-            ->assertSessionHas('success');
-        $rejected = Notification::where('user_id', $this->seeker->id)->where('type', 'pembayaran_ditolak')->firstOrFail();
-        $this->assertStringContainsString('Nominal belum masuk.', $rejected->message);
-
-        // Daftar pembayaran punya filter Ditolak + tombol unggah ulang.
-        $this->actingAs($this->seeker)->get(route('payments.index', ['filter' => 'ditolak']))
-            ->assertSee('Unggah Ulang')->assertSee($order->code);
-
-        $payment = $this->uploadProof($order);
-        $this->actingAs($this->provider)->patch(route('payments.update', $payment), ['action' => 'confirm'])
-            ->assertSessionHas('success');
-
-        $this->assertSame(Payment::STATUS_LUNAS, $payment->fresh()->status);
-        $this->assertDatabaseHas('notifications', ['user_id' => $this->seeker->id, 'type' => 'pembayaran_lunas']);
-    }
-
-    #[Test]
-    public function pembayar_melihat_status_bukan_konfirmasi(): void
-    {
-        $payment = $this->uploadProof($this->acceptedOrder());
-
-        $this->actingAs($this->seeker)->get(route('payments.show', $payment))
-            ->assertSee('STATUS PEMBAYARAN')->assertDontSee('Konfirmasi Penerimaan');
-        $this->actingAs($this->provider)->get(route('payments.show', $payment))
-            ->assertSee('KONFIRMASI PEMBAYARAN')->assertSee('Konfirmasi Penerimaan');
-    }
+    // Pengujian pembayaran (PBI-13) ada di tests/Feature/PaymentTest.php.
 
     // ── Notifikasi lonceng (PBI-17) ──────────────────────────
 
